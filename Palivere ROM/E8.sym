@@ -1,0 +1,369 @@
+;
+;	R O M . s y m
+;	~~~~~~~~~~~~~
+;
+;	Tartu ROM symbol file
+;
+;       Last edited: 20230406
+;
+
+message		Using Tartu definitions
+
+
+;=============================================================================
+;
+;	Tartu definitions
+;
+
+cpu		8080
+
+;	General RAM definitions
+
+;=============================================================================
+;
+;	General ROM definitions
+;
+
+; org		0xC000
+
+code		0xC000	Boot1
+
+; code		0xC020	Cmp_DE_HL
+; code		0xC0BE	Ldax_B
+; code		0xC0C0	Ldax_D
+; code		0xC0C2	Ldax_H	; mov a,m
+; code		0xC0C4	Scroll
+; code		0xF3E7	Boot2
+; code		0xF454	ColdStart
+; code		0xD000	Basic
+
+code		0xDCE9	GetY_N		; loe sümbol, kontrolli, kas on Y või N (NC)
+
+; code		0xF0AC	MonCmdParser
+
+; Monitor entry points
+; sümboli sisestamise ja väljastamise muudetavad aadressid
+code		0xC7F0	OutVec	;A: väljastatav sümbol
+code		0xC7F3	InVec	;tagasi: A=loetud sümbol
+; nende vaikimisi väärtused, lugemine klaviatuurilt, väljastamine ekraanile
+code		0xF81C	COut@	;A: väljastatav sümbol
+code		0xFA45	RdKey@	;tagasi: A=loetud sümbol
+
+code		0xFB03	Scroll1	;siia tuleb, kui viimasel real tehakse reavahetus
+
+; klaviatuuri ja ekraani asjad
+; code		0xFB94	KBStat	;tagasi A=FF, kui klahvi polnud vajutatud, muidu klahvi kood
+; code		0xFA59	GetChar	;näitab kursorit ja loeb sümboli klaviatuurilt
+code		0xF2E0	prNib	;A: trükitav 1-kohaline arv
+code		0xF2D3	prByte	;A: trükitav 2-kohaline arv
+code		0xF2CA	prAdr	;HL: trükitav 4-kohaline arv
+code		0xF13E	prLine	;HL: rea algus, C: lõputunnus
+; code		0xF756	GetLnZ	;trükib reavahetuse ja kukub GetLn-i
+code		0xF759	GetLn	;trükib prompti (0xC80D) ja sisestab rea aadressile 0xC901
+code		0xF763	GetLn1	;sisestab rea aadressile 0xC901
+; ekraanioperatsioonid
+code		0xF7B4	SetNor	; valged tähed mustal taustal
+code		0xF7B9	SetInv	; mustad tähed valgel taustal
+; code		0xF7BE	HTab	;A: veeru # (0...0x3F)
+; code		0xF7DC	VTab	;A: rea # (0...0x18)
+
+code		0xF9A0	HomCl	; puhastab ekraani ja paneb kursori üles vasakule
+code		0xF9DA	Home	; paneb kursori üles vasakule
+
+; code		0xF942	NextLine	; läheb järgmisele reale ? kas algusse?, skrollib vajadusel
+code		0xF1C5	SetScr48	; ekraan 48-veeruliseks
+code		0xF1CA	SetScr64	; ekraan 64-veeruliseks
+
+; code		0xFB19	ScrlTxt		; liigutab ekraani tekstitõmmist 1 rea võrra üles
+code		0xF971	prCRLF		; väljastab ekraanile reavahetuse
+code		0xF976	prSpace		; kirjutab ekraanile tühiku
+code		0xF1BD	txtWidth	; vahetab 40- ja 64-veerulist ekraani
+code		0xF1B5	findNonSpc	; otsib HL järgi esimest mittetühikut
+code		0xF1FB	doIn		; täidab monitori käsu I (loeb pordist)
+code		0xF224	doOut		; täidab monitori käsu IO (kirjutab porti)
+; code		0xF26B	makeInOut	; kirjutab aadressile 0xC7F6 käsu (akumulaatorist) In xx või Out xx ja selle järele RET.
+					; Pordi nr. peab kuidagi teisiti saama baiti 0xC7F7
+byte		0xC7F7	portNo		; ... sinna see kirjutatakse
+code		0xF174	tapeWrite	; kirjutab makile mäluosa ...
+code		0xF194	tapeRead	; loeb makilt faili aadressile ...
+code		0xF19A	tapeVfy		; võrdleb makilt faili aadressilega ...
+
+code		0xF082	doList		; väljastab mäluosa 8080 käskudena
+code		0xF000	doDump		; väljastab mäluosa 16-ndarvude ja ASCII sümbolitena
+code		0xF1F7	doGo		; alustab programmi täitmist aadressilt, mis on sõnas 0xC812
+code		0xF2F2	doMove		; täidab monitori Move-käsu
+code		0xF2F8	doVerify	; täidab monitori Verify-käsu
+code		0xF1E5	doInText	; sisestab monitoris tekstijada
+
+code		0xFA02	mult64		; korrutab HL 64-ga
+
+code		0xFA22	doBeep		; piuksub
+
+code		0xFA38	wait		; ootab 56+(HL)*28 tsüklit
+
+; code		0xF8B0	OutVisible	; tuleb Cout@-st, sümbol tuleb joonistada ekraanile
+; code		0xF903	Out48Col	; sümbol joonistatakse 48-veerulisele ekraanile
+code		0xFD24	Out64Col	; sümbol joonistatakse 64-veerulisele ekraanile
+
+; viimase alammärgendid
+code		0xFD4D	d0Is1		; veeru number on paaritu
+code		0xFD54	Col_00		; veeru number on 0,4,8,...
+; code		0xCD9A	Col_00_out	; 00-veeru joonistamine: 6 bitti kõrgemateks, kokku mälust võetud 2 madalama bitiga
+; code		0xCDB1	Col_01		; veeru number on 1,5,9,...
+; code		0xCDC8	Col_01_out	; 01-veeru joonistamine: 2 kõrgemat bitti madalateks, kokku mälust võetud 6 kõrgema bitiga
+					; järgmisse baiti 4 madalamat bitti kõrgemateks, kokku mälust võetud 4 madalama bitiga 
+; code		0xCDEF	Col_10		; veeru number on 2,6,A,...
+; code		0xCE07	Col_10_out	; 10-veeru joonistamine: 4 kõrgemat bitti madalateks, kokku mälust võetud 4 kõrgema bitiga
+					; järgmisse baiti 2 madalamat bitti kõrgemateks, kokku mälust võetud 6 madalama bitiga 
+; code		0xCE2C	Col_11		; veeru number on 3,7,B,...
+; code		0xCE45	Col_11_out	; 11-veeru joonistamine: 6 bitti kokku mälust võetud 2 kõrgema bitiga
+
+; code		0xF9E4	ClrScr_2	; teise (värvilise jaoks vajaliku) ekraanipiirkonna puhastamine
+; code		0xF9C2	QuickFill	; täidab (ekraanipiirkonna) magasini abil kehtiva Normal/Inverse värviga
+
+; mälu sisu liigutamised
+code		0xF9F3	Move		;BC: lähtekoha algus, HL: sihtkoha algus, DE: lähtekoha lõpp + 1
+
+; code		0xCFF0	MovROM	;BC: lähtekoha algus, HL: sihtkoha algus, DE: lähtekoha lõpp + 1.
+;				 Saab kasutada C0-C8 ROMide opmällu kopeerimiseks.
+
+code		0xF9EA	Fill	;B: sisu, HL: algus, DE: pikkus
+
+; kassetikas
+; code		0xED4F	TSave		;0xC837: algus, 0xC839: lõpp, 0xC829: nimi (6 char)
+; code		0xEB7B	TRead		;0xC837: algus, 0xC839: lõpp, 0xC829: nimi (6 char)
+; kassetinduse alamprogrammid
+; code		0xEE78	TLdError	;0xC446 = "Load error"
+; code		0xEE7E	TVfError	;0xC452 = "Verify error"
+; code		0xEC1E	TReading	;0xC43D = "Reading"
+
+; igasugu avastatud asjad
+; code		0xCB94	NegateHL	; HL := -HL
+; code		0xCBA8	CmpDEHL		; paneb Z-lipu
+code		0xFC50	CmpBCHL		; paneb Z-lipu
+
+; code		0xEE84	printROM1	; väljastab ROM1-s oleva stringi (aadress HL-is, lõpetab '$')
+
+code		0xFB3B	fl_last		; täidab ekraani viimase rea N/I värvi tühikutega
+;
+
+; BIOSi funktsioonid 
+; neid suunamisi (D0 alguses) on vähe, vt. allpool 
+; code		0xD050	boot	;0xC9CC	-> 0xB200
+; code		0xD06D	wboot	;0xC9CF	-> 0xB203
+; code		0xE80F	constat	;0xC9D2	-> 0xB206
+; code		0xE812	conin	;0xC9D5	-> 0xB209
+; code		0xE818	conout	;0xC9D8	-> 0xB20C
+; code		0xE81B	list	;0xC9DB	-> 0xB20F
+; code		0xE81E	punch	;0xC9DE	-> 0xB212
+; code		0xD61D	reader	;0xC9E1	-> 0xB215
+; code		0xD9AB	home		;0xC9E4	-> 0xB218
+; code		0xDD98	seldsk		;0xC9E7	-> 0xB21B
+; code		0xDD48	settrk		;0xC9EA	-> 0xB21E
+; code		0xDDD0	setsec		;0xC9ED	-> 0xB221
+; code		0xFB70	setDMA		;0xC9F0	-> 0xB224
+; code		0xD186	read	;0xC9F3	-> 0xB227
+; code		0xFE23	write	;0xC9F6	-> 0xB22A
+; code		0xFDCD	listst	;0xC9F9	-> 0xB22D
+; code		0xFE08	sectran	;0xC9FC	-> 0xB230
+
+; BIOSi funktsioonid ROM-is
+code		0xD050	boot		;
+code		0xD06D	wboot		;
+code		0xD195	constat		;
+code		0xD19E	conin		;
+code		0xD1A1	conout		;
+code		0xD1BE	list		;
+code		0xD1DF	punch		;
+code		0xD1DD	reader		;
+code		0xD1E0	home		;
+code		0xD1F0	seldsk		;
+code		0xD250	settrk		;
+code		0xD264	setsec		;
+code		0xD285	setDMA		;
+code		0xD28B	read		;
+code		0xD2CB	write		;
+code		0xD1B5	listst		;
+code		0xD275	sectran		;
+;?
+code		0xD667	somewhere	;
+
+; BIOSi funktsioonid kopeerituna opmällu
+code		0xBE00	r_boot		;
+code		0xBE03	r_wboot		;
+code		0xBE06	r_constat		;
+code		0xBE09	r_conin		;
+code		0xBE0C	r_conout		;
+code		0xBE0F	r_list		;
+code		0xBE12	r_punch		;
+code		0xBE15	r_reader		;
+code		0xBE18	r_home		;
+code		0xBE1B	r_seldsk		;
+code		0xBE1E	r_settrk		;
+code		0xBE21	r_setsec		;
+code		0xBE24	r_setDMA		;
+code		0xBE27	r_read		;
+code		0xBE2A	r_write		;
+code		0xBE2D	r_listst		;
+code		0xBE30	r_sectran		;
+;?
+code		0xBE33	r_somewhere	;
+
+
+; Tartu BIOSi pesad
+
+byte		0x0004	CPMcurDsk	;
+byte		0xC0AF	dpbase	0x10	;
+
+byte		0xB357	sekdsk		; BIOSi jaoks
+word		0xB358	sektrk		;
+byte		0xB35A	seksec		;
+word		0xB35B	dmaadr		;
+
+; Disk Parameter Base
+word		0xC0AF	dph_XLT			; sector translation table address (identical drivess share)
+word		0xC0B1	dph_scratch	0x03	; scratch area
+word		0xC0B7	dph_DirBuf		; directory buffer address (128 bytes, same for all drives)
+word		0xC0B9	dph_DPB			; disk parameter block (identical drivess share)
+word		0xC0BB	dph_CSV			; disk change scratch area address (different for each DPH)
+word		0xC0BD	dph_ALV			; allocation  scratch area address (different for each DPH)
+; DPB (first and only)
+word		0xC0BF	dpb_SPT			; sectors per track
+byte		0xC0C1	dpb_BSH			; data allocation block shift factor, determined by the data block allocation size
+byte		0xC0C2	dpb_BLM			; data allocation block mask (2**[BSH-1])
+byte		0xC0C3	dpb_EXM			; extent mask, determined by data block allocation size and number of disk blocks
+word		0xC0C4	dpb_DSM			; total storage capacity of disk drive
+word		0xC0C6	dpb_DRM			; total number of directory entries minus one
+byte		0xC0C8	dpb_AL0			; determines reserved directory blocks
+byte		0xC0C9	dpb_AL1			; determines reserved directory blocks
+word		0xC0CA	dpb_CKS			; size of directory check vector
+word		0xC0CC	dpb_OFF			; # of reserved tracks at beginning of logical disk
+
+; DPB0:
+; D41B : 27 	db	027H	;
+; D41C : 00	db	000H	; 027h = 39 SPT
+; D41D : 03 	db	003H	; BSH
+; D41E : 07 	db	007H	; BLM
+; D41F : 00 	db	000H	; EXM
+; D420 : B8 	db	0B8H	; 
+; D421 : 00 	db	000H	; 0B8h = 184 DSM
+; D422 : 3F 	db	03FH	;
+; D423 : 00 	db	000H	; 03Fh = 63 DRM
+; D424 : C0 	db	0C0H	; 11000000 AL0
+; D425 : 00 	db	000H	; 00000000 AL1
+; D426 : 05 	db	005H	;
+; D427 : 00 	db	000H	; CKS
+; D428 : 02 	db	002H	; 
+; D429 : 00 	db	000H	; OFF
+; D42A : FF 	db	0FFH	; täide 10h rajale
+
+
+
+byte		0xD41B	DPB0		0x10	; siia tuleb seldsk
+byte		0xD42B	DPB1		0x10	; 
+byte		0xD43B	DPB2		0x10	; 
+byte		0xD44B	DPB3		0x10	; 
+
+
+; word		0xFDD9	zeroes		; reavahede joonistamiseks
+
+; code		0xC9AC	movBC2HL_DE	;(HL) := (BC) kuni BC==DE
+; code		0xC888	In99d6		;in 99h; ani 40h
+;
+
+word		0xC100	LatBitmap	0x0180
+; word		0xC400	GrBitmap	0x00C0
+word		0xC580	RusBitmap	0x0140
+
+; Intel 8080 mnemonics, 4 chars each, some have hi bit set
+word		0xC2E4	Mnemonics1	0x3C
+word		0xC35D	Mnemonics2	0x2C
+word		0xC3C9	Registers2	0x04
+byte		0xC3D2	Registers3	0x0C
+byte		0xC3DE	Registers1	0x09
+byte		0xC3E7	Octals		0x09
+word		0xC3F1	Conditions	0x08
+
+byte		0xFA09	rowAddr		0x19	; ridade asukohad graafikaekraanil
+
+
+; järgmised on opmälu  jaoks
+byte		0xC803	b_smth		; külmkäivitusel 0 (?)
+byte		0xC807	b_Column	; veeru # ekraanil (0 kuni 47 või 63)
+byte		0xC808	b_Row		; rea # ekraanil (0 kuni 24)
+byte		0xC809	b_NormInv	; 0=Normal, FF = Inverse
+word		0xC80A	b_crsr		; kursori aadress tekstiekraanil (2 baiti)
+byte		0xC80D	b_prompt	; kutsungisümbol
+
+word		0xC819	b_c_img		; tähepiltide algusaadress (2 baiti, standardselt 0xC100);
+
+byte		0xC821	b_ESCm		; FF: ESC-jada on aktiivne, 0: ei ole
+
+word		0xC825	booted		; "1234" if already switched on
+
+byte		0xC82C	s_width		; ekraani laius (48 või 64)
+
+string		0xC900	inBuf		0x0040	; ? ehk rohkem?
+
+string		0xC9C0	t_ScrImg	0x0640	; screen image in ASCII; 25*64 = 1600 bytes (0x640), up to CFFF
+
+; BIOSi "kopirait"
+string		0xD02D	t_BIOS		0x23	;
+
+; BIOSi veateated
+string		0xD3D0	t_d_err		0x8	; Error
+string		0xD3D8	t_d_rd		0x9	; reading
+string		0xD3E1	t_d_wr		0x9	; writing
+string		0xD3EA	t_d_drv		0x8	; drive
+string		0xD3F2	t_d_trk		0x9	; track
+string		0xD3FB	t_d_sec		0x9	; sector
+string		0xD404	t_d_r_i		0x12	; retry/ignore?
+
+string		0XDA5C	t_d_chg		0x45	; "Disk changed"
+
+; võrgu veateated?
+string		0xDDE6	t_d_rot		0xC	; R/O track
+string		0xDDF2	t_d_bc		0x11	; bad connection
+string		0xDE03	t_d_rod		0xB	; R/O disk
+string		0xDE0E	t_d_bbk		0xC	; bad block
+string		0xDE1A	t_d_nc		0x19	; network not connected
+string		0xDE34	t_d_ner		0x12	; network error:
+string		0xDE46	t_d_con		0x2C	; continue?
+string		0xDE72	t_d_mas		0x1F	; cannot connect w master
+string		0xDE91	t_d_cpn		0x1A	; t-cp-net
+
+byte		0xDEE8	t_empty		0x118	; mälu tühi lõpp
+
+byte		0xBE4E	d_netwrk		; positiivne, kui ketas, else võrk
+code		0xDEAB	bios_vec		; BIOSi suunamised, mis kopeeritakse opmällu @ 0x
+byte		0xDEE8	bv_end			; ... sinnani
+
+code		0xD186	mvbc2hl_de		; liigutab baite (BC) -> (HL) DE tükki
+
+; E8 (Basicu) asjad
+string		0xE997	t_basic		0x12	; *** T-Basic ***
+string		0xEE59	t_pplay		0x13	; Press Play...
+string		0xEE6C	t_pkey		0x18	; & any key ...
+string		0xEE84	t_srch		0xA	; Searching
+string		0xEE8E	t_fndc		0x7	; Found
+string		0xEE95	t_ldng		0x8	; Loading
+string		0xEE9D	t_ldng		0xA	; Verifying
+string		0xEEA7	t_lderr		0xB	; Load error
+string		0xEEB2	t_vferr		0xD	; Verify error
+string		0xEEBF	t_tok		0x3	; OK
+string		0xEEC2	t_prec		0x1C	; Press REC...
+string		0xEEDE	t_svng		0x7	; Saving
+string		0xEEE5	t_t_eof		0xE	; End of files
+
+string		0xEFEB	t_date		0x15	; End of files
+
+string		0xF358	t_tere		0xBS	; Monitori tervitus
+
+
+
+
+
+
+; http://kboohk.com/cart/index.php?route=product/category&path=59
+; https://www.wordfast.net/wiki/Creating_Wordfast_Translation_Memory_in_WFC
+

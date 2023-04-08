@@ -1,0 +1,99 @@
+;
+;	t a r t u . s y m
+;	~~~~~~~~~~~~~~~~~
+;
+;	Iskra 1080 Tartu ROM symbol file
+;
+;       Last edited: 20200212
+;
+
+message		Using Iskra 8080 Tartu definitions
+
+
+;=============================================================================
+;
+;	Iskra 8080 Tartu definitions
+;
+
+cpu		8080
+
+;	General RAM definitions
+
+;=============================================================================
+;
+;	General ROM definitions
+;
+
+org		0xC000
+
+code		0xC000	Boot1
+code		0xC006	KST1
+code		0xC00D	KST2
+code		0xC018	KST3
+
+code		0xC020	Cmp_DE_HL
+
+code		0xC0BE	Ldax_B
+code		0xC0C0	Ldax_D
+code		0xC0C2	Ldax_H	; mov a,m
+
+code		0xC0C4	Scroll
+
+
+code		0xF3E7	Boot2
+code		0xF454	ColdStart
+
+code		0xF0AC	MonCmdParser
+
+; Monitor entry points
+; sümboli sisestamise ja väljastamise muudetavad aadressid
+
+code		0xC7F0	COut@	;A: väljastatav sümbol
+code		0xC7F3	RdKey@	;tagasi: A=loetud sümbol
+; klaviatuuri ja ekraani asjad
+code		0xFB94	KBStat	;tagasi A=FF, kui klahvi polnud vajutatud, muidu klahvi kood
+code		0xF2D3	prNib	;A: trükitav 1-kohaline arv
+code		0xF2C6	prByte	;A: trükitav 2-kohaline arv
+code		0xF2BD	prAdr	;HL: trükitav 4-kohaline arv
+code		0xF137	prLine	;HL: rea algus, C: lõputunnus
+code		0xFDC5	prXXX	;A: sümbol
+; ekraanioperatsioonid
+code		0xF798	SetNor	
+code		0xF793	SetInv	
+code		0xF7BE	HTab	;A: veeru # (0...0x3F)
+code		0xF7DC	VTab	;A: rea # (0...0x18)
+code		0xF9A0	HomCl	
+; mälu sisu liigutamised
+code		0xFA11	Move	;BC: lähtekoha algus, HL: sihtkoha algus, DE: sihtkoha lõpp
+code		0xFA08	Fill	;B: sisu, HL: algus, DE: pikkus
+; kassetikas
+code		0xED4F	TSave	;0xC837: algus, 0xC839: lõpp, 0xC829: nimi (6 char)
+code		0xEB7B	TRead	;0xC837: algus, 0xC839: lõpp, 0xC829: nimi (6 char)
+
+
+word		0xC03B	Empty1		0x0041
+
+word		0xC100	LatBitmap	0x0180
+word		0xC400	GrBitmap	0x00C0
+word		0xC580	RusBitmap	0x0140
+
+word		0xC825	booted		; "1234" if already switched on
+
+string		0xC900	inBuf		0x0040	; ? ehk rohkem?
+
+string		0xC9C0	t_ScrImg	0x0640	; screen image in ASCII; 25*64 = 1600 bytes (0x640), up to CFFF
+
+string		0XD0D7	t_in		0x0005
+string		0XD0DC	t_Ok		0x0005
+string		0XD0E1	t_Break		0x0008
+
+string		0XD937	t_reenter	0x000C
+string		0XD9F0	t_x_ignor	0x0011
+
+string		0XF34A	t_Iskra2	0x0016
+
+
+
+; http://kboohk.com/cart/index.php?route=product/category&path=59
+; https://www.wordfast.net/wiki/Creating_Wordfast_Translation_Memory_in_WFC
+

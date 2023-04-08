@@ -1,0 +1,2990 @@
+				;
+				;	Disassembled by:
+				;		DASMx object code disassembler
+				;		(c) Copyright 1996-1999   Conquest Consultants
+				;		Version 1.30 (Oct  6 1999)
+				;
+				;	File:		D0D8.bin
+				;
+				;	Size:		4096 bytes
+				;	Checksum:	BD9D
+				;	CRC-32:		F7F21C72
+				;
+				;	Date:		Sat Apr 08 15:12:06 2023
+				;
+				;	CPU:		Intel 8080 (MCS-80/85 family)
+				;
+				;
+				;
+					org	0D000H
+				;
+D000 : C3 50 D0 	" P "		jmp	boot
+D003 : C3 6D D0 	" m "		jmp	wboot
+D006 : C3 0F E8 	"   "		jmp	LE80F
+D009 : C3 12 E8 	"   "		jmp	LE812
+D00C : C3 18 E8 	"   "		jmp	LE818
+D00F : C3 1B E8 	"   "		jmp	LE81B
+D012 : C3 1E E8 	"   "		jmp	LE81E
+D015 : C3 1D D6 	"   "		jmp	LD61D
+D018 : C3 AB D9 	"   "		jmp	LD9AB
+D01B : C3 98 DD 	"   "		jmp	LDD98
+D01E : C3 48 DD 	" H "		jmp	LDD48
+D021 : C3 D0 DD 	"   "		jmp	LDDD0
+D024 : C3 70 FB 	" p "		jmp	LFB70
+D027 : C3 86 D1 	"   "		jmp	mvbc2hl_de
+D02A : C9 		" "		ret
+				;
+D02B : 54 		"T"		mov	d,h
+				;
+D02C : 31 		"1"		db	031H
+D02D				t_BIOS:
+D02D : 2A 2A 2A 20 	"*** "		db	"*** T-BIOS  November/06/1990 ***\x0D\x0A\x00"
+       54 2D 42 49 	"T-BI"
+       4F 53 20 20 	"OS  "
+       4E 6F 76 65 	"Nove"
+       6D 62 65 72 	"mber"
+       2F 30 36 2F 	"/06/"
+       31 39 39 30 	"1990"
+       20 2A 2A 2A 	" ***"
+       0D 0A 00 	"   "
+				;
+D050				boot:
+D050 : F3 		" "		di
+D051 : D3 10 		"  "		out	010H
+D053 : 3E 00 		"> "		mvi	a,000H
+D055 : D3 F8 		"  "		out	0F8H
+D057 : D3 FC 		"  "		out	0FCH
+D059 : D3 71 		" q"		out	071H
+D05B : D3 70 		" p"		out	070H
+D05D : 31 80 00 	"1  "		lxi	sp,00080H
+D060 : CD 34 D1 	" 4 "		call	LD134
+D063 : CD 82 D4 	"   "		call	LD482
+D066 : 3A 51 BE 	":Q "		lda	XBE51
+D069 : B7 		" "		ora	a
+D06A : C4 36 DD 	" 6 "		cnz	LDD36
+D06D				wboot:
+D06D : F3 		" "		di
+D06E : 3E C9 		"> "		mvi	a,0C9H
+D070 : 00 		" "		nop
+D071 : 00 		" "		nop
+D072 : 00 		" "		nop
+D073 : F3 		" "		di
+D074 : D3 10 		"  "		out	010H
+D076 : 3E 00 		"> "		mvi	a,000H
+D078 : D3 71 		" q"		out	071H
+D07A : D3 70 		" p"		out	070H
+D07C : 3E C3 		"> "		mvi	a,0C3H
+D07E : 32 F9 C7 	"2  "		sta	XC7F9
+D081 : 21 80 D1 	"!  "		lxi	h,0D180H
+D084 : 22 FA C7 	""  "		shld	XC7FA
+D087 : FB 		" "		ei
+D088 : 31 80 00 	"1  "		lxi	sp,00080H
+D08B : CD 48 D1 	" H "		call	LD148
+D08E : 3A 04 00 	":  "		lda	CPMcurDsk
+D091 : 32 E7 BE 	"2  "		sta	XBEE7
+D094 : 0E 00 		"  "		mvi	c,000H
+D096 : CD 1B BE 	"   "		call	r_seldsk
+D099 : CD 36 BE 	" 6 "		call	LBE36
+D09C : 22 E5 BE 	""  "		shld	XBEE5
+D09F : CD 18 BE 	"   "		call	r_home
+D0A2 : 3A BF BF 	":  "		lda	XBFBF
+D0A5 : 32 40 BE 	"2@ "		sta	XBE40
+D0A8 : 06 2C 		" ,"		mvi	b,02CH
+D0AA : 0E 00 		"  "		mvi	c,000H
+D0AC : 16 00 		"  "		mvi	d,000H
+D0AE : 21 00 A8 	"!  "		lxi	h,LA800
+D0B1 : 3A 4E BE 	":N "		lda	d_netwrk
+D0B4 : B7 		" "		ora	a
+D0B5 : F2 BF D0 	"   "		jp	LD0BF
+D0B8 : 14 		" "		inr	d
+D0B9 : FE AA 		"  "		cpi	0AAH
+D0BB : C2 BF D0 	"   "		jnz	LD0BF
+D0BE : 14 		" "		inr	d
+D0BF				LD0BF:
+D0BF : C5 		" "		push	b
+D0C0 : D5 		" "		push	d
+D0C1 : E5 		" "		push	h
+D0C2 : 4A 		"J"		mov	c,d
+D0C3 : 06 00 		"  "		mvi	b,000H
+D0C5 : 2A E5 BE 	"*  "		lhld	XBEE5
+D0C8 : EB 		" "		xchg
+D0C9 : CD 30 BE 	" 0 "		call	r_sectran
+D0CC : 44 		"D"		mov	b,h
+D0CD : 4D 		"M"		mov	c,l
+D0CE : CD 21 BE 	" ! "		call	r_setsec
+D0D1 : C1 		" "		pop	b
+D0D2 : C5 		" "		push	b
+D0D3 : CD 24 BE 	" $ "		call	r_setDMA
+D0D6 : CD 27 BE 	" ' "		call	r_read
+D0D9 : FE 00 		"  "		cpi	000H
+D0DB : C2 6D D0 	" m "		jnz	wboot
+D0DE : E1 		" "		pop	h
+D0DF : 11 80 00 	"   "		lxi	d,00080H
+D0E2 : 19 		" "		dad	d
+D0E3 : D1 		" "		pop	d
+D0E4 : C1 		" "		pop	b
+D0E5 : 05 		" "		dcr	b
+D0E6 : CA 01 D1 	"   "		jz	LD101
+D0E9 : 14 		" "		inr	d
+D0EA : 7A 		"z"		mov	a,d
+D0EB : E5 		" "		push	h
+D0EC : 21 40 BE 	"!@ "		lxi	h,XBE40
+D0EF : BE 		" "		cmp	m
+D0F0 : E1 		" "		pop	h
+D0F1 : C2 BF D0 	"   "		jnz	LD0BF
+D0F4 : 16 00 		"  "		mvi	d,000H
+D0F6 : 0C 		" "		inr	c
+D0F7 : C5 		" "		push	b
+D0F8 : 06 00 		"  "		mvi	b,000H
+D0FA : CD 1E BE 	"   "		call	r_settrk
+D0FD : C1 		" "		pop	b
+D0FE : C3 BF D0 	"   "		jmp	LD0BF
+				;
+D101				LD101:
+D101 : 3E C3 		"> "		mvi	a,0C3H
+D103 : 32 00 00 	"2  "		sta	X0000
+D106 : 21 03 BE 	"!  "		lxi	h,r_wboot
+D109 : 22 01 00 	""  "		shld	X0001
+D10C : 32 05 00 	"2  "		sta	X0005
+D10F : 21 06 B0 	"!  "		lxi	h,0B006H
+D112 : 22 06 00 	""  "		shld	X0006
+D115 : 01 80 00 	"   "		lxi	b,00080H
+D118 : CD 24 BE 	" $ "		call	r_setDMA
+D11B : 3A E7 BE 	":  "		lda	XBEE7
+D11E : 4F 		"O"		mov	c,a
+D11F : CD 1B BE 	"   "		call	r_seldsk
+D122 : AF 		" "		xra	a
+D123 : 32 43 BE 	"2C "		sta	XBE43
+D126 : 32 44 BE 	"2D "		sta	XBE44
+D129 : 32 45 BE 	"2E "		sta	XBE45
+D12C : 3A 04 00 	":  "		lda	CPMcurDsk
+D12F : 4F 		"O"		mov	c,a
+D130 : FB 		" "		ei
+D131 : C3 00 A8 	"   "		jmp	LA800
+				;
+D134				LD134:
+D134 : CD A0 F9 	"   "		call	HomCl
+D137 : 01 AB DE 	"   "		lxi	b,bios_vec
+D13A : 11 E8 DE 	"   "		lxi	d,t_empty
+D13D : 21 00 BE 	"!  "		lxi	h,r_boot
+D140 : CD 86 D1 	"   "		call	mvbc2hl_de
+D143 : AF 		" "		xra	a
+D144 : 32 04 00 	"2  "		sta	CPMcurDsk
+D147 : C9 		" "		ret
+				;
+D148				LD148:
+D148 : 3E 40 		">@"		mvi	a,040H
+D14A : 32 2C C8 	"2, "		sta	s_width
+D14D : 21 78 FC 	"!x "		lxi	h,0FC78H
+D150 : 22 40 C8 	""@ "		shld	XC840
+D153 : AF 		" "		xra	a
+D154 : 32 03 00 	"2  "		sta	X0003
+D157 : 32 23 C8 	"2# "		sta	XC823
+D15A : 32 22 C8 	"2" "		sta	XC822
+D15D : 32 21 C8 	"2! "		sta	b_ESCm
+D160 : 32 43 BE 	"2C "		sta	XBE43
+D163 : 32 44 BE 	"2D "		sta	XBE44
+D166 : 32 45 BE 	"2E "		sta	XBE45
+D169 : F3 		" "		di
+D16A : 3E C3 		"> "		mvi	a,0C3H
+D16C : 32 F3 C7 	"2  "		sta	InVec
+D16F : 32 F0 C7 	"2  "		sta	OutVec
+D172 : 21 C9 F6 	"!  "		lxi	h,0F6C9H
+D175 : 22 F4 C7 	""  "		shld	XC7F4
+D178 : 21 1C F8 	"!  "		lxi	h,COut@
+D17B : 22 F1 C7 	""  "		shld	XC7F1
+D17E : FB 		" "		ei
+D17F : C9 		" "		ret
+				;
+D180 : D3 FB 		"  "		out	0FBH
+D182 : FF 		" "		rst	7
+D183 : D3 F3 		"  "		out	0F3H
+D185 : C9 		" "		ret
+				;
+D186				mvbc2hl_de:
+D186 : 79 		"y"		mov	a,c
+D187 : BB 		" "		cmp	e
+D188 : C2 8E D1 	"   "		jnz	LD18E
+D18B : 78 		"x"		mov	a,b
+D18C : BA 		" "		cmp	d
+D18D : C8 		" "		rz
+D18E				LD18E:
+D18E : 0A 		" "		ldax	b
+D18F : 77 		"w"		mov	m,a
+D190 : 03 		" "		inx	b
+D191 : 23 		"#"		inx	h
+D192 : C3 86 D1 	"   "		jmp	mvbc2hl_de
+				;
+D195				constat:
+D195 : CD 70 FB 	" p "		call	LFB70
+D198 : EE FF 		"  "		xri	0FFH
+D19A : C8 		" "		rz
+D19B : 3E FF 		"> "		mvi	a,0FFH
+D19D : C9 		" "		ret
+D19E				conin:
+D19E : C3 F3 C7 	"   "		jmp	InVec
+				;
+D1A1				conout:
+D1A1 : 79 		"y"		mov	a,c
+D1A2 : FE 1D 		"  "		cpi	01DH
+D1A4 : 3E 30 		">0"		mvi	a,030H
+D1A6 : CA B1 D1 	"   "		jz	LD1B1
+D1A9 : 79 		"y"		mov	a,c
+D1AA : FE 1E 		"  "		cpi	01EH
+D1AC : C2 F0 C7 	"   "		jnz	OutVec
+D1AF : 3E 40 		">@"		mvi	a,040H
+D1B1				LD1B1:
+D1B1 : 32 2C C8 	"2, "		sta	s_width
+D1B4 : C9 		" "		ret
+				;
+D1B5				listst:
+D1B5 : DB F9 		"  "		in	0F9H
+D1B7 : E6 01 		"  "		ani	001H
+D1B9 : 3E 00 		"> "		mvi	a,000H
+D1BB : C8 		" "		rz
+D1BC : 2F 		"/"		cma
+D1BD : C9 		" "		ret
+				;
+D1BE				list:
+D1BE : F5 		" "		push	psw
+D1BF				LD1BF:
+D1BF : DB F9 		"  "		in	0F9H
+D1C1 : E6 01 		"  "		ani	001H
+D1C3 : CA BF D1 	"   "		jz	LD1BF
+D1C6 : 79 		"y"		mov	a,c
+D1C7 : 2F 		"/"		cma
+D1C8 : D3 F8 		"  "		out	0F8H
+D1CA : 3E 20 		"> "		mvi	a,020H
+D1CC : D3 FC 		"  "		out	0FCH
+D1CE : E3 		" "		xthl
+D1CF : E3 		" "		xthl
+D1D0 : 3E 00 		"> "		mvi	a,000H
+D1D2 : D3 FC 		"  "		out	0FCH
+D1D4				LD1D4:
+D1D4 : DB F9 		"  "		in	0F9H
+D1D6 : E6 01 		"  "		ani	001H
+D1D8 : C2 D4 D1 	"   "		jnz	LD1D4
+D1DB : F1 		" "		pop	psw
+D1DC : C9 		" "		ret
+				;
+D1DD				reader:
+D1DD : 3E 1A 		"> "		mvi	a,01AH
+D1DF				punch:
+D1DF : C9 		" "		ret
+				;
+D1E0				home:
+D1E0 : 3A 4E BE 	":N "		lda	d_netwrk
+D1E3 : B7 		" "		ora	a
+D1E4 : FA EA D1 	"   "		jm	LD1EA
+D1E7 : CD A6 D6 	"   "		call	LD6A6
+D1EA				LD1EA:
+D1EA : 01 00 00 	"   "		lxi	b,X0000
+D1ED : C3 1E BE 	"   "		jmp	r_settrk
+				;
+D1F0				seldsk:
+D1F0 : 21 00 00 	"!  "		lxi	h,X0000
+D1F3 : 3A A8 BF 	":  "		lda	XBFA8
+D1F6 : B9 		" "		cmp	c
+D1F7 : C8 		" "		rz
+D1F8 : D8 		" "		rc
+D1F9 : 79 		"y"		mov	a,c
+D1FA : 32 04 00 	"2  "		sta	CPMcurDsk
+D1FD : 32 56 BE 	"2V "		sta	XBE56
+D200 : C5 		" "		push	b
+D201 : 06 00 		"  "		mvi	b,000H
+D203 : 21 F8 BE 	"!  "		lxi	h,XBEF8
+D206 : 09 		" "		dad	b
+D207 : C1 		" "		pop	b
+D208 : 7E 		"~"		mov	a,m
+D209 : FE FF 		"  "		cpi	0FFH
+D20B : 21 00 00 	"!  "		lxi	h,X0000
+D20E : C8 		" "		rz
+D20F : 32 4E BE 	"2N "		sta	d_netwrk
+D212 : B7 		" "		ora	a
+D213 : F2 27 D2 	" ' "		jp	LD227
+D216 : FE AA 		"  "		cpi	0AAH
+D218 : CA 44 D2 	" D "		jz	LD244
+D21B : E6 03 		"  "		ani	003H
+D21D : 32 E8 BE 	"2  "		sta	XBEE8
+D220 : 79 		"y"		mov	a,c
+D221 : 32 41 BE 	"2A "		sta	XBE41
+D224 : C3 44 D2 	" D "		jmp	LD244
+				;
+D227				LD227:
+D227 : E6 10 		"  "		ani	010H
+D229 : 3E 07 		"> "		mvi	a,007H
+D22B : CA 30 D2 	" 0 "		jz	LD230
+D22E : 3E 1A 		"> "		mvi	a,01AH
+D230				LD230:
+D230 : 32 E2 BE 	"2  "		sta	XBEE2
+D233 : 3A 4E BE 	":N "		lda	d_netwrk
+D236 : E6 10 		"  "		ani	010H
+D238 : 3A B1 BF 	":  "		lda	XBFB1
+D23B : CA 41 D2 	" A "		jz	LD241
+D23E : 3A B2 BF 	":  "		lda	XBFB2
+D241				LD241:
+D241 : 32 B0 BF 	"2  "		sta	XBFB0
+D244				LD244:
+D244 : 69 		"i"		mov	l,c
+D245 : 26 00 		"& "		mvi	h,000H
+D247 : 29 		")"		dad	h
+D248 : 29 		")"		dad	h
+D249 : 29 		")"		dad	h
+D24A : 29 		")"		dad	h
+D24B : 11 AF C0 	"   "		lxi	d,dpbase
+D24E : 19 		" "		dad	d
+D24F : C9 		" "		ret
+				;
+D250				settrk:
+D250 : 3A 4E BE 	":N "		lda	d_netwrk
+D253 : B7 		" "		ora	a
+D254 : F2 5F D2 	" _ "		jp	LD25F
+D257 : E5 		" "		push	h
+D258 : 60 		"`"		mov	h,b
+D259 : 69 		"i"		mov	l,c
+D25A : 22 57 BE 	""W "		shld	XBE57
+D25D : E1 		" "		pop	h
+D25E : C9 		" "		ret
+				;
+D25F				LD25F:
+D25F : 79 		"y"		mov	a,c
+D260 : 32 DD BE 	"2  "		sta	XBEDD
+D263 : C9 		" "		ret
+				;
+D264				setsec:
+D264 : 3A 4E BE 	":N "		lda	d_netwrk
+D267 : B7 		" "		ora	a
+D268 : F2 70 D2 	" p "		jp	LD270
+D26B : 79 		"y"		mov	a,c
+D26C : 32 59 BE 	"2Y "		sta	XBE59
+D26F : C9 		" "		ret
+				;
+D270				LD270:
+D270 : 79 		"y"		mov	a,c
+D271 : 32 DE BE 	"2  "		sta	XBEDE
+D274 : C9 		" "		ret
+				;
+D275				sectran:
+D275 : 3A 4E BE 	":N "		lda	d_netwrk
+D278 : B7 		" "		ora	a
+D279 : F2 7F D2 	"   "		jp	LD27F
+D27C : 60 		"`"		mov	h,b
+D27D : 69 		"i"		mov	l,c
+D27E : C9 		" "		ret
+				;
+D27F				LD27F:
+D27F : EB 		" "		xchg
+D280 : 09 		" "		dad	b
+D281 : 6E 		"n"		mov	l,m
+D282 : 26 00 		"& "		mvi	h,000H
+D284 : C9 		" "		ret
+				;
+D285				setDMA:
+D285 : 69 		"i"		mov	l,c
+D286 : 60 		"`"		mov	h,b
+D287 : 22 DF BE 	""  "		shld	XBEDF
+D28A : C9 		" "		ret
+				;
+D28B				read:
+D28B : 21 00 00 	"!  "		lxi	h,X0000
+D28E : 39 		"9"		dad	sp
+D28F : 22 AC BF 	""  "		shld	XBFAC
+D292 : 31 00 C9 	"1  "		lxi	sp,inBuf
+D295				LD295:
+D295 : 21 D8 D3 	"!  "		lxi	h,t_d_rd
+D298 : 22 A9 BF 	""  "		shld	XBFA9
+D29B : 3A 4E BE 	":N "		lda	d_netwrk
+D29E : B7 		" "		ora	a
+D29F : F2 B3 D2 	"   "		jp	LD2B3
+D2A2 : FE AA 		"  "		cpi	0AAH
+D2A4 : C2 AD D2 	"   "		jnz	LD2AD
+D2A7 : CD 25 DD 	" % "		call	LDD25
+D2AA : C3 C2 D2 	"   "		jmp	LD2C2
+				;
+D2AD				LD2AD:
+D2AD : CD 09 E8 	"   "		call	LE809
+D2B0 : C3 C2 D2 	"   "		jmp	LD2C2
+				;
+D2B3				LD2B3:
+D2B3 : CD BF D6 	"   "		call	LD6BF
+D2B6 : B7 		" "		ora	a
+D2B7 : D3 70 		" p"		out	070H
+D2B9 : CA C2 D2 	"   "		jz	LD2C2
+D2BC : CD 0B D3 	"   "		call	LD30B
+D2BF : CA 95 D2 	"   "		jz	LD295
+D2C2				LD2C2:
+D2C2 : D3 70 		" p"		out	070H
+D2C4 : 2A AC BF 	"*  "		lhld	XBFAC
+D2C7 : F9 		" "		sphl
+D2C8 : B7 		" "		ora	a
+D2C9 : FB 		" "		ei
+D2CA : C9 		" "		ret
+				;
+D2CB				write:
+D2CB : 21 00 00 	"!  "		lxi	h,X0000
+D2CE : 39 		"9"		dad	sp
+D2CF : 22 AC BF 	""  "		shld	XBFAC
+D2D2 : 31 00 C9 	"1  "		lxi	sp,inBuf
+D2D5				LD2D5:
+D2D5 : 21 E1 D3 	"!  "		lxi	h,t_d_wr
+D2D8 : 22 A9 BF 	""  "		shld	XBFA9
+D2DB : 3A 4E BE 	":N "		lda	d_netwrk
+D2DE : B7 		" "		ora	a
+D2DF : F2 F3 D2 	"   "		jp	LD2F3
+D2E2 : FE AA 		"  "		cpi	0AAH
+D2E4 : C2 ED D2 	"   "		jnz	LD2ED
+D2E7 : CD 2A DD 	" * "		call	LDD2A
+D2EA : C3 02 D3 	"   "		jmp	LD302
+				;
+D2ED				LD2ED:
+D2ED : CD 0C E8 	"   "		call	LE80C
+D2F0 : C3 02 D3 	"   "		jmp	LD302
+				;
+D2F3				LD2F3:
+D2F3 : CD D9 D6 	"   "		call	LD6D9
+D2F6 : B7 		" "		ora	a
+D2F7 : D3 70 		" p"		out	070H
+D2F9 : CA 02 D3 	"   "		jz	LD302
+D2FC : CD 0B D3 	"   "		call	LD30B
+D2FF : CA D5 D2 	"   "		jz	LD2D5
+D302				LD302:
+D302 : D3 70 		" p"		out	070H
+D304 : 2A AC BF 	"*  "		lhld	XBFAC
+D307 : F9 		" "		sphl
+D308 : B7 		" "		ora	a
+D309 : FB 		" "		ei
+D30A : C9 		" "		ret
+				;
+D30B				LD30B:
+D30B : 3A 4E BE 	":N "		lda	d_netwrk
+D30E : B7 		" "		ora	a
+D30F : FA 1F D3 	"   "		jm	LD31F
+D312 : 3A DD BE 	":  "		lda	XBEDD
+D315 : 4F 		"O"		mov	c,a
+D316 : 06 00 		"  "		mvi	b,000H
+D318 : 3A DE BE 	":  "		lda	XBEDE
+D31B : 5F 		"_"		mov	e,a
+D31C : C3 28 D3 	" ( "		jmp	LD328
+				;
+D31F				LD31F:
+D31F : 2A 57 BE 	"*W "		lhld	XBE57
+D322 : 44 		"D"		mov	b,h
+D323 : 4D 		"M"		mov	c,l
+D324 : 3A 59 BE 	":Y "		lda	XBE59
+D327 : 5F 		"_"		mov	e,a
+D328				LD328:
+D328 : D5 		" "		push	d
+D329 : C5 		" "		push	b
+D32A : 3A 08 C8 	":  "		lda	b_Row
+D32D : C6 20 		"  "		adi	020H
+D32F : 32 42 C9 	"2B "		sta	XC942
+D332 : 3A 07 C8 	":  "		lda	b_Column
+D335 : C6 20 		"  "		adi	020H
+D337 : 32 43 C9 	"2C "		sta	XC943
+D33A : 01 C0 CC 	"   "		lxi	b,0CCC0H
+D33D : 11 00 CD 	"   "		lxi	d,0CD00H
+D340 : 21 00 C9 	"!  "		lxi	h,inBuf
+D343 : CD 86 D1 	"   "		call	mvbc2hl_de
+D346 : CD CA D3 	"   "		call	LD3CA
+D349 : 21 D0 D3 	"!  "		lxi	h,t_d_err
+D34C : CD C5 D3 	"   "		call	LD3C5
+D34F : 3A 4E BE 	":N "		lda	d_netwrk
+D352 : E6 F0 		"  "		ani	0F0H
+D354 : 47 		"G"		mov	b,a
+D355 : 3A 50 BE 	":P "		lda	XBE50
+D358 : B0 		" "		ora	b
+D359 : CD D3 F2 	"   "		call	prByte
+D35C : 2A A9 BF 	"*  "		lhld	XBFA9
+D35F : CD C5 D3 	"   "		call	LD3C5
+D362 : 21 EA D3 	"!  "		lxi	h,t_d_drv
+D365 : CD C5 D3 	"   "		call	LD3C5
+D368 : 3A 04 00 	":  "		lda	CPMcurDsk
+D36B : E6 0F 		"  "		ani	00FH
+D36D : C6 41 		" A"		adi	041H
+D36F : CD F0 C7 	"   "		call	OutVec
+D372 : 21 F2 D3 	"!  "		lxi	h,t_d_trk
+D375 : CD C5 D3 	"   "		call	LD3C5
+D378 : C1 		" "		pop	b
+D379 : 60 		"`"		mov	h,b
+D37A : 69 		"i"		mov	l,c
+D37B : CD CA F2 	"   "		call	prAdr
+D37E : 21 FB D3 	"!  "		lxi	h,t_d_sec
+D381 : CD C5 D3 	"   "		call	LD3C5
+D384 : D1 		" "		pop	d
+D385 : 7B 		"{"		mov	a,e
+D386 : CD D3 F2 	"   "		call	prByte
+D389 : 21 04 D4 	"!  "		lxi	h,t_d_r_i
+D38C : CD C5 D3 	"   "		call	LD3C5
+D38F				LD38F:
+D38F : 3E 07 		"> "		mvi	a,007H
+D391 : CD F0 C7 	"   "		call	OutVec
+D394 : CD F3 C7 	"   "		call	InVec
+D397 : E6 5F 		" _"		ani	05FH
+D399 : FE 52 		" R"		cpi	052H
+D39B : CA A3 D3 	"   "		jz	LD3A3
+D39E : FE 49 		" I"		cpi	049H
+D3A0 : C2 8F D3 	"   "		jnz	LD38F
+D3A3				LD3A3:
+D3A3 : F5 		" "		push	psw
+D3A4 : 3E 1B 		"> "		mvi	a,01BH
+D3A6 : 32 40 C9 	"2@ "		sta	XC940
+D3A9 : 3E 3D 		">="		mvi	a,03DH
+D3AB : 32 41 C9 	"2A "		sta	XC941
+D3AE : 3E 00 		"> "		mvi	a,000H
+D3B0 : 32 44 C9 	"2D "		sta	XC944
+D3B3 : CD CA D3 	"   "		call	LD3CA
+D3B6 : 21 00 C9 	"!  "		lxi	h,inBuf
+D3B9 : CD C5 D3 	"   "		call	LD3C5
+D3BC : F1 		" "		pop	psw
+D3BD : FE 52 		" R"		cpi	052H
+D3BF : C8 		" "		rz
+D3C0 : 3A 50 BE 	":P "		lda	XBE50
+D3C3 : B7 		" "		ora	a
+D3C4 : C9 		" "		ret
+				;
+D3C5				LD3C5:
+D3C5 : 0E 00 		"  "		mvi	c,000H
+D3C7 : C3 3E F1 	" > "		jmp	prLine
+				;
+D3CA				LD3CA:
+D3CA : 21 16 D4 	"!  "		lxi	h,0D416H
+D3CD : C3 C5 D3 	"   "		jmp	LD3C5
+				;
+D3D0				t_d_err:
+D3D0 : 45 72 72 6F 	"Erro"		db	"Error #\x00"
+       72 20 23 00 	"r # "
+D3D8				t_d_rd:
+D3D8 : 20 72 65 61 	" rea"		db	" reading\x00"
+       64 69 6E 67 	"ding"
+       00 		" "
+D3E1				t_d_wr:
+D3E1 : 20 77 72 69 	" wri"		db	" writing\x00"
+       74 69 6E 67 	"ting"
+       00 		" "
+D3EA				t_d_drv:
+D3EA : 20 64 72 69 	" dri"		db	" drive \x00"
+       76 65 20 00 	"ve  "
+D3F2				t_d_trk:
+D3F2 : 3A 20 74 72 	": tr"		db	": track \x00"
+       61 63 6B 20 	"ack "
+       00 		" "
+D3FB				t_d_sec:
+D3FB : 20 73 65 63 	" sec"		db	" sector \x00"
+       74 6F 72 20 	"tor "
+       00 		" "
+D404				t_d_r_i:
+D404 : 2E 20 52 65 	". Re"		db	". Retry/Ignore ?\x08\x00"
+       74 72 79 2F 	"try/"
+       49 67 6E 6F 	"Igno"
+       72 65 20 3F 	"re ?"
+       08 00 		"  "
+				;
+D416 : 1B 		" "		dcx	d
+D417 : 3D 		"="		dcr	a
+D418 : 2C 		","		inr	l
+				;
+D419 : 20 		" "		db	020H
+				;
+D41A : 00 		" "		nop
+				;
+D41B				DPB0:
+D41B : 27 		"'"		db	027H
+D41C : 00 		" "		db	000H
+D41D : 03 		" "		db	003H
+D41E : 07 		" "		db	007H
+D41F : 00 		" "		db	000H
+D420 : B8 		" "		db	0B8H
+D421 : 00 		" "		db	000H
+D422 : 3F 		"?"		db	03FH
+D423 : 00 		" "		db	000H
+D424 : C0 		" "		db	0C0H
+D425 : 00 		" "		db	000H
+D426 : 05 		" "		db	005H
+D427 : 00 		" "		db	000H
+D428 : 02 		" "		db	002H
+D429 : 00 		" "		db	000H
+D42A : FF 		" "		db	0FFH
+D42B				DPB1:
+D42B : 27 		"'"		db	027H
+D42C : 00 		" "		db	000H
+D42D : 04 		" "		db	004H
+D42E : 0F 		" "		db	00FH
+D42F : 01 		" "		db	001H
+D430 : BD 		" "		db	0BDH
+D431 : 00 		" "		db	000H
+D432 : 7F 		" "		db	07FH
+D433 : 00 		" "		db	000H
+D434 : C0 		" "		db	0C0H
+D435 : 00 		" "		db	000H
+D436 : 05 		" "		db	005H
+D437 : 00 		" "		db	000H
+D438 : 02 		" "		db	002H
+D439 : 00 		" "		db	000H
+D43A : FF 		" "		db	0FFH
+D43B				DPB2:
+D43B : 27 		"'"		db	027H
+D43C : 00 		" "		db	000H
+D43D : 04 		" "		db	004H
+D43E : 0F 		" "		db	00FH
+D43F : 01 		" "		db	001H
+D440 : BD 		" "		db	0BDH
+D441 : 00 		" "		db	000H
+D442 : 7F 		" "		db	07FH
+D443 : 00 		" "		db	000H
+D444 : C0 		" "		db	0C0H
+D445 : 00 		" "		db	000H
+D446 : 05 		" "		db	005H
+D447 : 00 		" "		db	000H
+D448 : 02 		" "		db	002H
+D449 : 00 		" "		db	000H
+D44A : FF 		" "		db	0FFH
+D44B				DPB3:
+D44B : 27 		"'"		db	027H
+D44C : 00 		" "		db	000H
+D44D : 04 		" "		db	004H
+D44E : 0F 		" "		db	00FH
+D44F : 00 		" "		db	000H
+D450 : 80 		" "		db	080H
+D451 : 01 		" "		db	001H
+D452 : FF 		" "		db	0FFH
+D453 : 00 		" "		db	000H
+D454 : F0 		" "		db	0F0H
+D455 : 00 		" "		db	000H
+D456 : 05 		" "		db	005H
+D457 : 00 		" "		db	000H
+D458 : 02 		" "		db	002H
+D459 : 00 		" "		db	000H
+D45A : FF 		" "		db	0FFH
+				;
+D45B : 01 04 07 	"   "		lxi	b,00704H
+D45E : 0A 		" "		ldax	b
+D45F : 0D 		" "		dcr	c
+				;
+D460 : 10 		" "		db	010H
+				;
+D461 : 13 		" "		inx	d
+D462 : 16 19 		"  "		mvi	d,019H
+D464 : 1C 		" "		inr	e
+D465 : 1F 		" "		rar
+D466 : 22 25 02 	""% "		shld	X0225
+D469 : 05 		" "		dcr	b
+				;
+D46A : 08 		" "		db	008H
+				;
+D46B : 0B 		" "		dcx	b
+D46C : 0E 11 		"  "		mvi	c,011H
+D46E : 14 		" "		inr	d
+D46F : 17 		" "		ral
+D470 : 1A 		" "		ldax	d
+D471 : 1D 		" "		dcr	e
+				;
+D472 : 20 		" "		db	020H
+				;
+D473 : 23 		"#"		inx	h
+D474 : 26 03 		"& "		mvi	h,003H
+D476 : 06 09 		"  "		mvi	b,009H
+D478 : 0C 		" "		inr	c
+D479 : 0F 		" "		rrc
+D47A : 12 		" "		stax	d
+D47B : 15 		" "		dcr	d
+				;
+D47C : 18 		" "		db	018H
+				;
+D47D : 1B 		" "		dcx	d
+D47E : 1E 21 		" !"		mvi	e,021H
+D480 : 24 		"$"		inr	h
+D481 : 27 		"'"		daa
+D482				LD482:
+D482 : 21 2D D0 	"!- "		lxi	h,t_BIOS
+D485 : CD C5 D3 	"   "		call	LD3C5
+D488 : 21 AF C1 	"!  "		lxi	h,0C1AFH
+D48B : 22 BA BF 	""  "		shld	XBFBA
+D48E : 3E 00 		"> "		mvi	a,000H
+D490 : 32 51 BE 	"2Q "		sta	XBE51
+D493 : 32 BD BF 	"2  "		sta	XBFBD
+D496 : 32 BE BF 	"2  "		sta	XBFBE
+D499 : 32 A8 BF 	"2  "		sta	XBFA8
+D49C : 32 DB BE 	"2  "		sta	XBEDB
+D49F : 32 DC BE 	"2  "		sta	XBEDC
+D4A2 : 32 BC BF 	"2  "		sta	XBFBC
+D4A5 : 32 B3 BF 	"2  "		sta	XBFB3
+D4A8 : 21 1A 06 	"!  "		lxi	h,0061AH
+D4AB : 22 B6 BF 	""  "		shld	XBFB6
+D4AE : 22 B8 BF 	""  "		shld	XBFB8
+D4B1 : 21 F8 BE 	"!  "		lxi	h,XBEF8
+D4B4 : 0E 10 		"  "		mvi	c,010H
+D4B6 : 3E FF 		"> "		mvi	a,0FFH
+D4B8 : CD 9E D6 	"   "		call	LD69E
+D4BB : 3E 03 		"> "		mvi	a,003H
+D4BD : 32 EB BE 	"2  "		sta	XBEEB
+D4C0 : 21 00 03 	"!  "		lxi	h,00300H
+D4C3 : 22 E9 BE 	""  "		shld	XBEE9
+D4C6 : 3E 40 		">@"		mvi	a,040H
+D4C8 : 32 3F BE 	"2? "		sta	XBE3F
+D4CB : 21 00 1C 	"!  "		lxi	h,01C00H
+D4CE : 22 EC BE 	""  "		shld	XBEEC
+D4D1 : 3E 38 		">8"		mvi	a,038H
+D4D3 : 32 40 BE 	"2@ "		sta	XBE40
+D4D6 : 3E 00 		"> "		mvi	a,000H
+D4D8 : CD D9 D5 	"   "		call	LD5D9
+D4DB : D2 EA D4 	"   "		jnc	LD4EA
+D4DE : 3E 01 		"> "		mvi	a,001H
+D4E0 : CD D9 D5 	"   "		call	LD5D9
+D4E3 : 3E 01 		"> "		mvi	a,001H
+D4E5 : CE 00 		"  "		aci	000H
+D4E7 : 32 BC BF 	"2  "		sta	XBFBC
+D4EA				LD4EA:
+D4EA : CD 49 D6 	" I "		call	LD649
+D4ED : D2 FB D4 	"   "		jnc	LD4FB
+D4F0 : CD 06 E8 	"   "		call	LE806
+D4F3 : 3A F8 BE 	":  "		lda	XBEF8
+D4F6 : FE FF 		"  "		cpi	0FFH
+D4F8 : C2 01 D5 	"   "		jnz	LD501
+D4FB				LD4FB:
+D4FB : CD A6 DB 	"   "		call	LDBA6
+D4FE : C4 E0 DB 	"   "		cnz	LDBE0
+D501				LD501:
+D501 : 3A BC BF 	":  "		lda	XBFBC
+D504 : B7 		" "		ora	a
+D505 : CA 17 D5 	"   "		jz	LD517
+D508 : 3E 00 		"> "		mvi	a,000H
+D50A : CD 22 D5 	" " "		call	LD522
+D50D : 3A BC BF 	":  "		lda	XBFBC
+D510 : FE 02 		"  "		cpi	002H
+D512 : 3E 10 		"> "		mvi	a,010H
+D514 : CC 22 D5 	" " "		cz	LD522
+D517				LD517:
+D517 : 3A A8 BF 	":  "		lda	XBFA8
+D51A : B7 		" "		ora	a
+D51B : CA 1F D5 	"   "		jz	LD51F
+D51E : C9 		" "		ret
+D51F				LD51F:
+D51F : C3 DB F3 	"   "		jmp	LF3DB
+				;
+D522				LD522:
+D522 : 32 4D BE 	"2M "		sta	XBE4D
+D525 : 3A A8 BF 	":  "		lda	XBFA8
+D528 : 5F 		"_"		mov	e,a
+D529 : 16 00 		"  "		mvi	d,000H
+D52B : 21 F8 BE 	"!  "		lxi	h,XBEF8
+D52E : 19 		" "		dad	d
+D52F : 3A 4D BE 	":M "		lda	XBE4D
+D532 : 47 		"G"		mov	b,a
+D533 : CD 1D D6 	"   "		call	LD61D
+D536 : 80 		" "		add	b
+D537 : 77 		"w"		mov	m,a
+D538 : 78 		"x"		mov	a,b
+D539 : E6 10 		"  "		ani	010H
+D53B : 7E 		"~"		mov	a,m
+D53C : C2 47 D5 	" G "		jnz	LD547
+D53F : E6 03 		"  "		ani	003H
+D541 : 32 B1 BF 	"2  "		sta	XBFB1
+D544 : C3 4C D5 	" L "		jmp	LD54C
+				;
+D547				LD547:
+D547 : E6 03 		"  "		ani	003H
+D549 : 32 B2 BF 	"2  "		sta	XBFB2
+D54C				LD54C:
+D54C : 3A A8 BF 	":  "		lda	XBFA8
+D54F : 47 		"G"		mov	b,a
+D550 : 87 		" "		add	a
+D551 : 87 		" "		add	a
+D552 : 87 		" "		add	a
+D553 : 87 		" "		add	a
+D554 : 32 AE BF 	"2  "		sta	XBFAE
+D557 : 90 		" "		sub	b
+D558 : 5F 		"_"		mov	e,a
+D559 : 16 00 		"  "		mvi	d,000H
+D55B : 21 BF BF 	"!  "		lxi	h,XBFBF
+D55E : 19 		" "		dad	d
+D55F : E5 		" "		push	h
+D560 : 3A 4D BE 	":M "		lda	XBE4D
+D563 : CD 1D D6 	"   "		call	LD61D
+D566 : CD 3B D6 	" ; "		call	LD63B
+D569 : 44 		"D"		mov	b,h
+D56A : 4D 		"M"		mov	c,l
+D56B : 11 0F 00 	"   "		lxi	d,0000FH
+D56E : 19 		" "		dad	d
+D56F : EB 		" "		xchg
+D570 : E1 		" "		pop	h
+D571 : E5 		" "		push	h
+D572 : CD 86 D1 	"   "		call	mvbc2hl_de
+D575 : 3A AE BF 	":  "		lda	XBFAE
+D578 : 5F 		"_"		mov	e,a
+D579 : 16 00 		"  "		mvi	d,000H
+D57B : 21 AF C0 	"!  "		lxi	h,dpbase
+D57E : 19 		" "		dad	d
+D57F : 11 5B D4 	" [ "		lxi	d,0D45BH
+D582 : 73 		"s"		mov	m,e
+D583 : 23 		"#"		inx	h
+D584 : 72 		"r"		mov	m,d
+D585 : 23 		"#"		inx	h
+D586 : AF 		" "		xra	a
+D587 : 77 		"w"		mov	m,a
+D588 : 23 		"#"		inx	h
+D589 : 77 		"w"		mov	m,a
+D58A : 23 		"#"		inx	h
+D58B : 77 		"w"		mov	m,a
+D58C : 23 		"#"		inx	h
+D58D : 77 		"w"		mov	m,a
+D58E : 23 		"#"		inx	h
+D58F : 77 		"w"		mov	m,a
+D590 : 23 		"#"		inx	h
+D591 : 77 		"w"		mov	m,a
+D592 : 23 		"#"		inx	h
+D593 : 11 28 BF 	" ( "		lxi	d,0BF28H
+D596 : 73 		"s"		mov	m,e
+D597 : 23 		"#"		inx	h
+D598 : 72 		"r"		mov	m,d
+D599 : 23 		"#"		inx	h
+D59A : D1 		" "		pop	d
+D59B : 73 		"s"		mov	m,e
+D59C : 23 		"#"		inx	h
+D59D : 72 		"r"		mov	m,d
+D59E : 23 		"#"		inx	h
+D59F : E5 		" "		push	h
+D5A0 : 3A 4D BE 	":M "		lda	XBE4D
+D5A3 : CD 1D D6 	"   "		call	LD61D
+D5A6 : CD 3B D6 	" ; "		call	LD63B
+D5A9 : 01 0B 00 	"   "		lxi	b,0000BH
+D5AC : 09 		" "		dad	b
+D5AD : 4E 		"N"		mov	c,m
+D5AE : 23 		"#"		inx	h
+D5AF : 66 		"f"		mov	h,m
+D5B0 : 69 		"i"		mov	l,c
+D5B1 : CD CC D5 	"   "		call	LD5CC
+D5B4 : EB 		" "		xchg
+D5B5 : E1 		" "		pop	h
+D5B6 : 73 		"s"		mov	m,e
+D5B7 : 23 		"#"		inx	h
+D5B8 : 72 		"r"		mov	m,d
+D5B9 : 23 		"#"		inx	h
+D5BA : E5 		" "		push	h
+D5BB : 21 40 00 	"!@ "		lxi	h,00040H
+D5BE : CD CC D5 	"   "		call	LD5CC
+D5C1 : EB 		" "		xchg
+D5C2 : E1 		" "		pop	h
+D5C3 : 73 		"s"		mov	m,e
+D5C4 : 23 		"#"		inx	h
+D5C5 : 72 		"r"		mov	m,d
+D5C6 : 23 		"#"		inx	h
+D5C7 : 21 A8 BF 	"!  "		lxi	h,XBFA8
+D5CA : 34 		"4"		inr	m
+D5CB : C9 		" "		ret
+				;
+D5CC				LD5CC:
+D5CC : D5 		" "		push	d
+D5CD : EB 		" "		xchg
+D5CE : 2A BA BF 	"*  "		lhld	XBFBA
+D5D1 : EB 		" "		xchg
+D5D2 : 19 		" "		dad	d
+D5D3 : 22 BA BF 	""  "		shld	XBFBA
+D5D6 : EB 		" "		xchg
+D5D7 : D1 		" "		pop	d
+D5D8 : C9 		" "		ret
+				;
+D5D9				LD5D9:
+D5D9 : B7 		" "		ora	a
+D5DA : CA E6 D5 	"   "		jz	LD5E6
+D5DD : FE 01 		"  "		cpi	001H
+D5DF : 3E 1A 		"> "		mvi	a,01AH
+D5E1 : CA E8 D5 	"   "		jz	LD5E8
+D5E4 : B7 		" "		ora	a
+D5E5 : C9 		" "		ret
+				;
+D5E6				LD5E6:
+D5E6 : 3E 07 		"> "		mvi	a,007H
+D5E8				LD5E8:
+D5E8 : 32 E2 BE 	"2  "		sta	XBEE2
+D5EB : D3 00 		"  "		out	000H
+D5ED : 3A E2 BE 	":  "		lda	XBEE2
+D5F0 : D3 75 		" u"		out	075H
+D5F2 : CD B4 DA 	"   "		call	LDAB4
+D5F5 : CD B4 DA 	"   "		call	LDAB4
+D5F8 : CD B4 DA 	"   "		call	LDAB4
+D5FB : DB 7F 		"  "		in	07FH
+D5FD : E6 01 		"  "		ani	001H
+D5FF : C2 15 D6 	"   "		jnz	LD615
+D602 : 0E 64 		" d"		mvi	c,064H
+D604				LD604:
+D604 : DB 7F 		"  "		in	07FH
+D606 : E6 01 		"  "		ani	001H
+D608 : C2 19 D6 	"   "		jnz	LD619
+D60B : 0D 		" "		dcr	c
+D60C : CA 15 D6 	"   "		jz	LD615
+D60F : CD A1 DA 	"   "		call	LDAA1
+D612 : C3 04 D6 	"   "		jmp	LD604
+				;
+D615				LD615:
+D615 : B7 		" "		ora	a
+D616 : D3 70 		" p"		out	070H
+D618 : C9 		" "		ret
+				;
+D619				LD619:
+D619 : 37 		"7"		stc
+D61A : D3 70 		" p"		out	070H
+D61C : C9 		" "		ret
+				;
+D61D				LD61D:
+D61D : D3 00 		"  "		out	000H
+D61F : C5 		" "		push	b
+D620 : FE 10 		"  "		cpi	010H
+D622 : 3E 1A 		"> "		mvi	a,01AH
+D624 : CA 29 D6 	" ) "		jz	LD629
+D627 : 3E 07 		"> "		mvi	a,007H
+D629				LD629:
+D629 : D3 75 		" u"		out	075H
+D62B : DB 7F 		"  "		in	07FH
+D62D : E6 08 		"  "		ani	008H
+D62F : 47 		"G"		mov	b,a
+D630 : DB 77 		" w"		in	077H
+D632 : E6 04 		"  "		ani	004H
+D634 : B0 		" "		ora	b
+D635 : 1F 		" "		rar
+D636 : 1F 		" "		rar
+D637 : C1 		" "		pop	b
+D638 : D3 70 		" p"		out	070H
+D63A : C9 		" "		ret
+				;
+D63B				LD63B:
+D63B : C5 		" "		push	b
+D63C : 87 		" "		add	a
+D63D : 87 		" "		add	a
+D63E : 87 		" "		add	a
+D63F : 87 		" "		add	a
+D640 : 4F 		"O"		mov	c,a
+D641 : 06 00 		"  "		mvi	b,000H
+D643 : 21 1B D4 	"!  "		lxi	h,DPB0
+D646 : 09 		" "		dad	b
+D647 : C1 		" "		pop	b
+D648 : C9 		" "		ret
+				;
+D649				LD649:
+D649 : 3A 00 E8 	":  "		lda	XE800
+D64C : FE 68 		" h"		cpi	068H
+D64E : C2 65 D6 	" e "		jnz	LD665
+D651 : 3A 01 E8 	":  "		lda	XE801
+D654 : FE 64 		" d"		cpi	064H
+D656 : C2 65 D6 	" e "		jnz	LD665
+D659 : 3A 02 E8 	":  "		lda	XE802
+D65C : FE 18 		"  "		cpi	018H
+D65E : C2 65 D6 	" e "		jnz	LD665
+D661 : CD 03 E8 	"   "		call	LE803
+D664 : C9 		" "		ret
+				;
+D665				LD665:
+D665 : AF 		" "		xra	a
+D666 : C9 		" "		ret
+				;
+D667				somewhere:
+D667 : 01 FF FF 	"   "		lxi	b,XFFFF
+D66A : 11 FF FF 	"   "		lxi	d,XFFFF
+D66D : 2E 00 		". "		mvi	l,000H
+D66F : 3A DB BE 	":  "		lda	XBEDB
+D672 : B7 		" "		ora	a
+D673 : C8 		" "		rz
+D674 : 2C 		","		inr	l
+D675 : 1E 00 		"  "		mvi	e,000H
+D677 : 3A DB BE 	":  "		lda	XBEDB
+D67A : 3D 		"="		dcr	a
+D67B : 57 		"W"		mov	d,a
+D67C : 3A DC BE 	":  "		lda	XBEDC
+D67F : B7 		" "		ora	a
+D680 : C8 		" "		rz
+D681 : 2C 		","		inr	l
+D682 : 3A DB BE 	":  "		lda	XBEDB
+D685 : 4F 		"O"		mov	c,a
+D686 : 3A DC BE 	":  "		lda	XBEDC
+D689 : 81 		" "		add	c
+D68A : 3D 		"="		dcr	a
+D68B : 47 		"G"		mov	b,a
+D68C : C9 		" "		ret
+				;
+D68D				LD68D:
+D68D : C5 		" "		push	b
+D68E : 0E 03 		"  "		mvi	c,003H
+D690				LD690:
+D690 : B7 		" "		ora	a
+D691 : 7C 		"|"		mov	a,h
+D692 : 1F 		" "		rar
+D693 : 67 		"g"		mov	h,a
+D694 : 7D 		"}"		mov	a,l
+D695 : 1F 		" "		rar
+D696 : 6F 		"o"		mov	l,a
+D697 : 0D 		" "		dcr	c
+D698 : C2 90 D6 	"   "		jnz	LD690
+D69B : 23 		"#"		inx	h
+D69C : C1 		" "		pop	b
+D69D : C9 		" "		ret
+				;
+D69E				LD69E:
+D69E : 0C 		" "		inr	c
+D69F				LD69F:
+D69F : 0D 		" "		dcr	c
+D6A0 : C8 		" "		rz
+D6A1 : 77 		"w"		mov	m,a
+D6A2 : 23 		"#"		inx	h
+D6A3 : C3 9F D6 	"   "		jmp	LD69F
+				;
+D6A6				LD6A6:
+D6A6 : D3 00 		"  "		out	000H
+D6A8 : 3A E2 BE 	":  "		lda	XBEE2
+D6AB : D3 75 		" u"		out	075H
+D6AD : 0E 00 		"  "		mvi	c,000H
+D6AF				LD6AF:
+D6AF : DB 7F 		"  "		in	07FH
+D6B1 : E6 01 		"  "		ani	001H
+D6B3 : CA B9 D6 	"   "		jz	LD6B9
+D6B6 : D3 70 		" p"		out	070H
+D6B8 : C9 		" "		ret
+				;
+D6B9				LD6B9:
+D6B9 : CD A1 DA 	"   "		call	LDAA1
+D6BC : C3 AF D6 	"   "		jmp	LD6AF
+				;
+D6BF				LD6BF:
+D6BF : 3E 08 		"> "		mvi	a,008H
+D6C1				LD6C1:
+D6C1 : 32 4F BE 	"2O "		sta	XBE4F
+D6C4 : CD 4C D7 	" L "		call	LD74C
+D6C7 : B7 		" "		ora	a
+D6C8 : CA D5 D6 	"   "		jz	LD6D5
+D6CB : 3A 4F BE 	":O "		lda	XBE4F
+D6CE : 3D 		"="		dcr	a
+D6CF : C2 C1 D6 	"   "		jnz	LD6C1
+D6D2 : 3A 50 BE 	":P "		lda	XBE50
+D6D5				LD6D5:
+D6D5 : B7 		" "		ora	a
+D6D6 : D3 70 		" p"		out	070H
+D6D8 : C9 		" "		ret
+				;
+D6D9				LD6D9:
+D6D9 : 3E 08 		"> "		mvi	a,008H
+D6DB				LD6DB:
+D6DB : 32 4F BE 	"2O "		sta	XBE4F
+D6DE : CD 35 D8 	" 5 "		call	LD835
+D6E1 : B7 		" "		ora	a
+D6E2 : C2 14 D7 	"   "		jnz	LD714
+D6E5 : 3A B3 BF 	":  "		lda	XBFB3
+D6E8 : FE 4E 		" N"		cpi	04EH
+D6EA : 3E 00 		"> "		mvi	a,000H
+D6EC : CA 35 D7 	" 5 "		jz	LD735
+D6EF : CD C6 DA 	"   "		call	LDAC6
+D6F2 : 2A DF BE 	"*  "		lhld	XBEDF
+D6F5 : 22 E3 BE 	""  "		shld	XBEE3
+D6F8 : 21 5A BE 	"!Z "		lxi	h,0BE5AH
+D6FB : 22 DF BE 	""  "		shld	XBEDF
+D6FE : CD 4C D7 	" L "		call	LD74C
+D701 : 2A E3 BE 	"*  "		lhld	XBEE3
+D704 : 22 DF BE 	""  "		shld	XBEDF
+D707 : B7 		" "		ora	a
+D708 : C2 2B D7 	" + "		jnz	LD72B
+D70B : CD 39 D7 	" 9 "		call	LD739
+D70E : CA 35 D7 	" 5 "		jz	LD735
+D711 : C3 2B D7 	" + "		jmp	LD72B
+				;
+D714				LD714:
+D714 : FE 03 		"  "		cpi	003H
+D716 : C2 2B D7 	" + "		jnz	LD72B
+D719 : 3E 09 		"> "		mvi	a,009H
+D71B : 32 50 BE 	"2P "		sta	XBE50
+D71E : 3E 50 		">P"		mvi	a,050H
+D720 : CD F0 C7 	"   "		call	OutVec
+D723 : CD F3 C7 	"   "		call	InVec
+D726 : FE 03 		"  "		cpi	003H
+D728 : CA 32 D7 	" 2 "		jz	LD732
+D72B				LD72B:
+D72B : 3A 4F BE 	":O "		lda	XBE4F
+D72E : 3D 		"="		dcr	a
+D72F : C2 DB D6 	"   "		jnz	LD6DB
+D732				LD732:
+D732 : 3A 50 BE 	":P "		lda	XBE50
+D735				LD735:
+D735 : D3 70 		" p"		out	070H
+D737 : B7 		" "		ora	a
+D738 : C9 		" "		ret
+				;
+D739				LD739:
+D739 : 11 5A BE 	" Z "		lxi	d,0BE5AH
+D73C : 2A DF BE 	"*  "		lhld	XBEDF
+D73F : 0E 80 		"  "		mvi	c,080H
+D741				LD741:
+D741 : 1A 		" "		ldax	d
+D742 : BE 		" "		cmp	m
+D743 : C0 		" "		rnz
+D744 : 13 		" "		inx	d
+D745 : 23 		"#"		inx	h
+D746 : 0D 		" "		dcr	c
+D747 : C2 41 D7 	" A "		jnz	LD741
+D74A : AF 		" "		xra	a
+D74B : C9 		" "		ret
+				;
+D74C				LD74C:
+D74C : CD B9 D8 	"   "		call	LD8B9
+D74F : D3 75 		" u"		out	075H
+D751 : CD 01 D9 	"   "		call	LD901
+D754 : C0 		" "		rnz
+D755 : F3 		" "		di
+D756 : CD B4 D8 	"   "		call	LD8B4
+D759 : CD B4 D8 	"   "		call	LD8B4
+D75C : CD B4 D8 	"   "		call	LD8B4
+D75F : CD B4 D8 	"   "		call	LD8B4
+D762 : CD B4 D8 	"   "		call	LD8B4
+D765 : 26 01 		"& "		mvi	h,001H
+D767 : 06 A1 		"  "		mvi	b,0A1H
+D769 : 0E 00 		"  "		mvi	c,000H
+D76B : D3 73 		" s"		out	073H
+D76D : 3E 00 		"> "		mvi	a,000H
+D76F : D3 74 		" t"		out	074H
+D771 : 3E 08 		"> "		mvi	a,008H
+D773 : D3 74 		" t"		out	074H
+D775				LD775:
+D775 : DB 77 		" w"		in	077H
+D777 : A4 		" "		ana	h
+D778 : CA 75 D7 	" u "		jz	LD775
+D77B : DB 76 		" v"		in	076H
+D77D : B8 		" "		cmp	b
+D77E : C2 0A D8 	"   "		jnz	LD80A
+D781 : DB 77 		" w"		in	077H
+D783 : E6 02 		"  "		ani	002H
+D785 : C2 28 D8 	" ( "		jnz	LD828
+D788 : DB 76 		" v"		in	076H
+D78A : FE FB 		"  "		cpi	0FBH
+D78C : C2 1E D8 	"   "		jnz	LD81E
+D78F : 06 80 		"  "		mvi	b,080H
+D791 : 2A DF BE 	"*  "		lhld	XBEDF
+D794				LD794:
+D794 : DB 76 		" v"		in	076H
+D796 : 77 		"w"		mov	m,a
+D797 : 23 		"#"		inx	h
+D798 : 81 		" "		add	c
+D799 : 4F 		"O"		mov	c,a
+D79A : 05 		" "		dcr	b
+D79B : C2 94 D7 	"   "		jnz	LD794
+D79E : DB 76 		" v"		in	076H
+D7A0 : 47 		"G"		mov	b,a
+D7A1 : 79 		"y"		mov	a,c
+D7A2 : 2F 		"/"		cma
+D7A3 : B8 		" "		cmp	b
+D7A4 : C2 14 D8 	"   "		jnz	LD814
+D7A7 : 3E 00 		"> "		mvi	a,000H
+D7A9 : 32 50 BE 	"2P "		sta	XBE50
+D7AC : B7 		" "		ora	a
+D7AD : FB 		" "		ei
+D7AE : C9 		" "		ret
+				;
+D7AF				LD7AF:
+D7AF : 32 AF BF 	"2  "		sta	XBFAF
+D7B2 : 3A 4E BE 	":N "		lda	d_netwrk
+D7B5 : E6 02 		"  "		ani	002H
+D7B7 : C5 		" "		push	b
+D7B8 : 4F 		"O"		mov	c,a
+D7B9 : 3A B0 BF 	":  "		lda	XBFB0
+D7BC : E6 02 		"  "		ani	002H
+D7BE : B9 		" "		cmp	c
+D7BF : C1 		" "		pop	b
+D7C0 : 3A AF BF 	":  "		lda	XBFAF
+D7C3 : C8 		" "		rz
+D7C4 : 87 		" "		add	a
+D7C5 : C9 		" "		ret
+				;
+D7C6				LD7C6:
+D7C6 : 48 		"H"		mov	c,b
+D7C7 : 3A DD BE 	":  "		lda	XBEDD
+D7CA : 47 		"G"		mov	b,a
+D7CB : 79 		"y"		mov	a,c
+D7CC : B8 		" "		cmp	b
+D7CD : D2 EE D7 	"   "		jnc	LD7EE
+D7D0 : 4F 		"O"		mov	c,a
+D7D1 : 78 		"x"		mov	a,b
+D7D2 : 91 		" "		sub	c
+D7D3 : CD AF D7 	"   "		call	LD7AF
+D7D6 : F5 		" "		push	psw
+D7D7 : 3A B0 BF 	":  "		lda	XBFB0
+D7DA : E6 01 		"  "		ani	001H
+D7DC : CA E3 D7 	"   "		jz	LD7E3
+D7DF : F1 		" "		pop	psw
+D7E0 : B7 		" "		ora	a
+D7E1 : 1F 		" "		rar
+D7E2 : F5 		" "		push	psw
+D7E3				LD7E3:
+D7E3 : F1 		" "		pop	psw
+D7E4				LD7E4:
+D7E4 : F5 		" "		push	psw
+D7E5 : CD B4 DA 	"   "		call	LDAB4
+D7E8 : F1 		" "		pop	psw
+D7E9 : 3D 		"="		dcr	a
+D7EA : C2 E4 D7 	"   "		jnz	LD7E4
+D7ED : C9 		" "		ret
+				;
+D7EE				LD7EE:
+D7EE : 90 		" "		sub	b
+D7EF : CD AF D7 	"   "		call	LD7AF
+D7F2 : F5 		" "		push	psw
+D7F3 : 3A B0 BF 	":  "		lda	XBFB0
+D7F6 : E6 01 		"  "		ani	001H
+D7F8 : CA FF D7 	"   "		jz	LD7FF
+D7FB : F1 		" "		pop	psw
+D7FC : B7 		" "		ora	a
+D7FD : 1F 		" "		rar
+D7FE : F5 		" "		push	psw
+D7FF				LD7FF:
+D7FF : F1 		" "		pop	psw
+D800				LD800:
+D800 : F5 		" "		push	psw
+D801 : CD A1 DA 	"   "		call	LDAA1
+D804 : F1 		" "		pop	psw
+D805 : 3D 		"="		dcr	a
+D806 : C2 00 D8 	"   "		jnz	LD800
+D809 : C9 		" "		ret
+				;
+D80A				LD80A:
+D80A : 3E 01 		"> "		mvi	a,001H
+D80C : C3 2F D8 	" / "		jmp	LD82F
+				;
+D80F				LD80F:
+D80F : 3E 02 		"> "		mvi	a,002H
+D811 : C3 2F D8 	" / "		jmp	LD82F
+				;
+D814				LD814:
+D814 : 3E 03 		"> "		mvi	a,003H
+D816 : C3 2F D8 	" / "		jmp	LD82F
+				;
+D819 : 3E 04 		"> "		mvi	a,004H
+D81B : C3 2F D8 	" / "		jmp	LD82F
+				;
+D81E				LD81E:
+D81E : 3E 05 		"> "		mvi	a,005H
+D820 : C3 2F D8 	" / "		jmp	LD82F
+				;
+D823				LD823:
+D823 : 3E 06 		"> "		mvi	a,006H
+D825 : C3 2F D8 	" / "		jmp	LD82F
+				;
+D828				LD828:
+D828 : 3E 07 		"> "		mvi	a,007H
+D82A : C3 2F D8 	" / "		jmp	LD82F
+				;
+D82D				LD82D:
+D82D : 3E 08 		"> "		mvi	a,008H
+D82F				LD82F:
+D82F : 32 50 BE 	"2P "		sta	XBE50
+D832 : B7 		" "		ora	a
+D833 : FB 		" "		ei
+D834 : C9 		" "		ret
+				;
+D835				LD835:
+D835 : CD B9 D8 	"   "		call	LD8B9
+D838 : E6 0B 		"  "		ani	00BH
+D83A : D3 75 		" u"		out	075H
+D83C : 78 		"x"		mov	a,b
+D83D : D3 75 		" u"		out	075H
+D83F : DB 7F 		"  "		in	07FH
+D841 : E6 04 		"  "		ani	004H
+D843 : 3E 03 		"> "		mvi	a,003H
+D845 : C0 		" "		rnz
+D846 : CD 01 D9 	"   "		call	LD901
+D849 : C0 		" "		rnz
+D84A : F3 		" "		di
+D84B : CD B4 D8 	"   "		call	LD8B4
+D84E : 3E 10 		"> "		mvi	a,010H
+D850 : 82 		" "		add	d
+D851 : D3 74 		" t"		out	074H
+D853 : D3 73 		" s"		out	073H
+D855 : 26 07 		"& "		mvi	h,007H
+D857				LD857:
+D857 : 3A FF FF 	":  "		lda	XFFFF
+D85A : 7F 		" "		mov	a,a
+D85B : 3E 00 		"> "		mvi	a,000H
+D85D : D3 71 		" q"		out	071H
+D85F : 7F 		" "		mov	a,a
+D860 : 25 		"%"		dcr	h
+D861 : C2 57 D8 	" W "		jnz	LD857
+D864 : 3C 		"<"		inr	a
+D865 : 3E 00 		"> "		mvi	a,000H
+D867 : 0E 80 		"  "		mvi	c,080H
+D869 : 3E 0A 		"> "		mvi	a,00AH
+D86B : D3 71 		" q"		out	071H
+D86D : 06 00 		"  "		mvi	b,000H
+D86F : 7F 		" "		mov	a,a
+D870 : 2A DF BE 	"*  "		lhld	XBEDF
+D873 : 7F 		" "		mov	a,a
+D874 : 7F 		" "		mov	a,a
+D875 : 3E 1F 		"> "		mvi	a,01FH
+D877 : D3 71 		" q"		out	071H
+D879 : 00 		" "		nop
+D87A : 00 		" "		nop
+D87B : 00 		" "		nop
+D87C : 00 		" "		nop
+D87D : D3 72 		" r"		out	072H
+D87F : D3 73 		" s"		out	073H
+D881 : 00 		" "		nop
+D882 : 7F 		" "		mov	a,a
+D883 : 3E B0 		"> "		mvi	a,0B0H
+D885 : D3 71 		" q"		out	071H
+D887 : 00 		" "		nop
+D888				LD888:
+D888 : 7E 		"~"		mov	a,m
+D889 : 23 		"#"		inx	h
+D88A : 00 		" "		nop
+D88B : D3 71 		" q"		out	071H
+D88D : 80 		" "		add	b
+D88E : 47 		"G"		mov	b,a
+D88F : 00 		" "		nop
+D890 : 00 		" "		nop
+D891 : 0D 		" "		dcr	c
+D892 : C2 88 D8 	"   "		jnz	LD888
+D895 : 3E 00 		"> "		mvi	a,000H
+D897 : 78 		"x"		mov	a,b
+D898 : 2F 		"/"		cma
+D899 : D3 71 		" q"		out	071H
+D89B : 00 		" "		nop
+D89C : CD B6 D8 	"   "		call	LD8B6
+D89F : 3E 4E 		">N"		mvi	a,04EH
+D8A1 : D3 71 		" q"		out	071H
+D8A3 : CD B4 D8 	"   "		call	LD8B4
+D8A6 : D3 71 		" q"		out	071H
+D8A8 : 3E 00 		"> "		mvi	a,000H
+D8AA : D3 74 		" t"		out	074H
+D8AC : 3E 00 		"> "		mvi	a,000H
+D8AE : 32 50 BE 	"2P "		sta	XBE50
+D8B1 : B7 		" "		ora	a
+D8B2 : FB 		" "		ei
+D8B3 : C9 		" "		ret
+				;
+D8B4				LD8B4:
+D8B4 : 7F 		" "		mov	a,a
+D8B5 : 7F 		" "		mov	a,a
+D8B6				LD8B6:
+D8B6 : 7F 		" "		mov	a,a
+D8B7 : 00 		" "		nop
+D8B8 : C9 		" "		ret
+				;
+D8B9				LD8B9:
+D8B9 : D3 00 		"  "		out	000H
+D8BB : 3A E2 BE 	":  "		lda	XBEE2
+D8BE : 47 		"G"		mov	b,a
+D8BF : 3A B0 BF 	":  "		lda	XBFB0
+D8C2 : E6 03 		"  "		ani	003H
+D8C4 : 6F 		"o"		mov	l,a
+D8C5 : 3A 4E BE 	":N "		lda	d_netwrk
+D8C8 : E6 01 		"  "		ani	001H
+D8CA : CA DD D8 	"   "		jz	LD8DD
+D8CD : 3A B0 BF 	":  "		lda	XBFB0
+D8D0 : E6 01 		"  "		ani	001H
+D8D2 : CA E4 D8 	"   "		jz	LD8E4
+D8D5 : 3A DD BE 	":  "		lda	XBEDD
+D8D8 : E6 01 		"  "		ani	001H
+D8DA : CA E4 D8 	"   "		jz	LD8E4
+D8DD				LD8DD:
+D8DD : 3E 02 		"> "		mvi	a,002H
+D8DF : B0 		" "		ora	b
+D8E0 : 47 		"G"		mov	b,a
+D8E1 : C3 E8 D8 	"   "		jmp	LD8E8
+				;
+D8E4				LD8E4:
+D8E4 : 3E FD 		"> "		mvi	a,0FDH
+D8E6 : A0 		" "		ana	b
+D8E7 : 47 		"G"		mov	b,a
+D8E8				LD8E8:
+D8E8 : 16 00 		"  "		mvi	d,000H
+D8EA : 3A B0 BF 	":  "		lda	XBFB0
+D8ED : E6 02 		"  "		ani	002H
+D8EF : 0E 19 		"  "		mvi	c,019H
+D8F1 : CA F6 D8 	"   "		jz	LD8F6
+D8F4 : 0E 32 		" 2"		mvi	c,032H
+D8F6				LD8F6:
+D8F6 : 3A DD BE 	":  "		lda	XBEDD
+D8F9 : B9 		" "		cmp	c
+D8FA : DA FF D8 	"   "		jc	LD8FF
+D8FD : 16 01 		"  "		mvi	d,001H
+D8FF				LD8FF:
+D8FF : 78 		"x"		mov	a,b
+D900 : C9 		" "		ret
+				;
+D901				LD901:
+D901 : 1E 4F 		" O"		mvi	e,04FH
+D903 : D3 73 		" s"		out	073H
+D905				LD905:
+D905 : F3 		" "		di
+D906 : 26 01 		"& "		mvi	h,001H
+D908 : 0E 40 		" @"		mvi	c,040H
+D90A : 06 A1 		"  "		mvi	b,0A1H
+D90C : 3E 00 		"> "		mvi	a,000H
+D90E : D3 74 		" t"		out	074H
+D910 : 3E 08 		"> "		mvi	a,008H
+D912 : D3 74 		" t"		out	074H
+D914				LD914:
+D914 : DB 77 		" w"		in	077H
+D916 : A4 		" "		ana	h
+D917 : CA 14 D9 	"   "		jz	LD914
+D91A : DB 76 		" v"		in	076H
+D91C : B8 		" "		cmp	b
+D91D : C2 05 D9 	"   "		jnz	LD905
+D920 : DB 77 		" w"		in	077H
+D922 : E6 02 		"  "		ani	002H
+D924 : C2 05 D9 	"   "		jnz	LD905
+D927 : DB 76 		" v"		in	076H
+D929 : FE FE 		"  "		cpi	0FEH
+D92B : C2 05 D9 	"   "		jnz	LD905
+D92E : 3A DD BE 	":  "		lda	XBEDD
+D931 : 47 		"G"		mov	b,a
+D932 : DB 76 		" v"		in	076H
+D934 : B8 		" "		cmp	b
+D935 : CA 6C D9 	" l "		jz	LD96C
+D938 : 47 		"G"		mov	b,a
+D939 : DB 76 		" v"		in	076H
+D93B : 67 		"g"		mov	h,a
+D93C : BD 		" "		cmp	l
+D93D : CA 5A D9 	" Z "		jz	LD95A
+D940 : 3A DE BE 	":  "		lda	XBEDE
+D943 : 4F 		"O"		mov	c,a
+D944 : DB 76 		" v"		in	076H
+D946 : 79 		"y"		mov	a,c
+D947 : 80 		" "		add	b
+D948 : 84 		" "		add	h
+D949 : 2F 		"/"		cma
+D94A : 47 		"G"		mov	b,a
+D94B : DB 76 		" v"		in	076H
+D94D : B8 		" "		cmp	b
+D94E : C2 05 D9 	"   "		jnz	LD905
+D951 : 7C 		"|"		mov	a,h
+D952 : FE 04 		"  "		cpi	004H
+D954 : DA 37 DA 	" 7 "		jc	LDA37
+D957 : C3 05 D9 	"   "		jmp	LD905
+				;
+D95A				LD95A:
+D95A : DB 76 		" v"		in	076H
+D95C : 80 		" "		add	b
+D95D : 84 		" "		add	h
+D95E : 2F 		"/"		cma
+D95F : 4F 		"O"		mov	c,a
+D960 : DB 76 		" v"		in	076H
+D962 : B9 		" "		cmp	c
+D963 : C2 05 D9 	"   "		jnz	LD905
+D966 : CD C6 D7 	"   "		call	LD7C6
+D969 : C3 05 D9 	"   "		jmp	LD905
+				;
+D96C				LD96C:
+D96C : DB 76 		" v"		in	076H
+D96E : 67 		"g"		mov	h,a
+D96F : BD 		" "		cmp	l
+D970 : CA 8D D9 	"   "		jz	LD98D
+D973 : 3A DE BE 	":  "		lda	XBEDE
+D976 : 4F 		"O"		mov	c,a
+D977 : DB 76 		" v"		in	076H
+D979 : 79 		"y"		mov	a,c
+D97A : 80 		" "		add	b
+D97B : 84 		" "		add	h
+D97C : 2F 		"/"		cma
+D97D : 47 		"G"		mov	b,a
+D97E : DB 76 		" v"		in	076H
+D980 : B8 		" "		cmp	b
+D981 : C2 05 D9 	"   "		jnz	LD905
+D984 : 7C 		"|"		mov	a,h
+D985 : FE 04 		"  "		cpi	004H
+D987 : DA 37 DA 	" 7 "		jc	LDA37
+D98A : C3 05 D9 	"   "		jmp	LD905
+				;
+D98D				LD98D:
+D98D : 3A DE BE 	":  "		lda	XBEDE
+D990 : 4F 		"O"		mov	c,a
+D991 : DB 76 		" v"		in	076H
+D993 : B9 		" "		cmp	c
+D994 : CA 9E D9 	"   "		jz	LD99E
+D997 : 1D 		" "		dcr	e
+D998 : C2 05 D9 	"   "		jnz	LD905
+D99B : C3 0F D8 	"   "		jmp	LD80F
+				;
+D99E				LD99E:
+D99E : 79 		"y"		mov	a,c
+D99F : 80 		" "		add	b
+D9A0 : 84 		" "		add	h
+D9A1 : 2F 		"/"		cma
+D9A2 : 47 		"G"		mov	b,a
+D9A3 : DB 76 		" v"		in	076H
+D9A5 : B8 		" "		cmp	b
+D9A6 : C2 23 D8 	" # "		jnz	LD823
+D9A9 : AF 		" "		xra	a
+D9AA : C9 		" "		ret
+				;
+D9AB				LD9AB:
+D9AB : 4F 		"O"		mov	c,a
+D9AC : 3A 4E BE 	":N "		lda	d_netwrk
+D9AF : E6 03 		"  "		ani	003H
+D9B1 : C2 BB D9 	"   "		jnz	LD9BB
+D9B4 : B1 		" "		ora	c
+D9B5 : CA DA D9 	"   "		jz	LD9DA
+D9B8 : C3 2D D8 	" - "		jmp	LD82D
+				;
+D9BB				LD9BB:
+D9BB : 3D 		"="		dcr	a
+D9BC : CA D0 D9 	"   "		jz	LD9D0
+D9BF : 3D 		"="		dcr	a
+D9C0 : C2 DA D9 	"   "		jnz	LD9DA
+D9C3 : 79 		"y"		mov	a,c
+D9C4 : FE 02 		"  "		cpi	002H
+D9C6 : CA DA D9 	"   "		jz	LD9DA
+D9C9 : B7 		" "		ora	a
+D9CA : CA DA D9 	"   "		jz	LD9DA
+D9CD : C3 2D D8 	" - "		jmp	LD82D
+				;
+D9D0				LD9D0:
+D9D0 : 79 		"y"		mov	a,c
+D9D1 : FE 01 		"  "		cpi	001H
+D9D3 : CA DA D9 	"   "		jz	LD9DA
+D9D6 : B7 		" "		ora	a
+D9D7 : C2 2D D8 	" - "		jnz	LD82D
+D9DA				LD9DA:
+D9DA : 79 		"y"		mov	a,c
+D9DB : 32 B0 BF 	"2  "		sta	XBFB0
+D9DE : 3A 04 00 	":  "		lda	CPMcurDsk
+D9E1 : 21 7E C9 	"!~ "		lxi	h,0C97EH
+D9E4 : 22 B4 BF 	""  "		shld	XBFB4
+D9E7 : 21 AF C0 	"!  "		lxi	h,dpbase
+D9EA : 01 10 00 	"   "		lxi	b,00010H
+D9ED				LD9ED:
+D9ED : B7 		" "		ora	a
+D9EE : CA F6 D9 	"   "		jz	LD9F6
+D9F1 : 09 		" "		dad	b
+D9F2 : 3D 		"="		dcr	a
+D9F3 : C3 ED D9 	"   "		jmp	LD9ED
+				;
+D9F6				LD9F6:
+D9F6 : 01 0A 00 	"   "		lxi	b,0000AH
+D9F9 : 09 		" "		dad	b
+D9FA : CD B4 BF 	"   "		call	XBFB4
+D9FD : 5F 		"_"		mov	e,a
+D9FE : 23 		"#"		inx	h
+D9FF : CD B4 BF 	"   "		call	XBFB4
+DA02 : 57 		"W"		mov	d,a
+DA03 : EB 		" "		xchg
+DA04 : E5 		" "		push	h
+DA05 : 21 1B D4 	"!  "		lxi	h,DPB0
+DA08 : 3A B0 BF 	":  "		lda	XBFB0
+DA0B : E6 03 		"  "		ani	003H
+DA0D : 01 10 00 	"   "		lxi	b,00010H
+DA10				LDA10:
+DA10 : B7 		" "		ora	a
+DA11 : CA 19 DA 	"   "		jz	LDA19
+DA14 : 09 		" "		dad	b
+DA15 : 3D 		"="		dcr	a
+DA16 : C3 10 DA 	"   "		jmp	LDA10
+				;
+DA19				LDA19:
+DA19 : 4D 		"M"		mov	c,l
+DA1A : 44 		"D"		mov	b,h
+DA1B : 11 0F 00 	"   "		lxi	d,0000FH
+DA1E : 19 		" "		dad	d
+DA1F : EB 		" "		xchg
+DA20 : E1 		" "		pop	h
+DA21 : CD 86 D1 	"   "		call	mvbc2hl_de
+DA24 : 3A 4E BE 	":N "		lda	d_netwrk
+DA27 : E6 10 		"  "		ani	010H
+DA29 : 3A B0 BF 	":  "		lda	XBFB0
+DA2C : CA 33 DA 	" 3 "		jz	LDA33
+DA2F : 32 B2 BF 	"2  "		sta	XBFB2
+DA32 : C9 		" "		ret
+				;
+DA33				LDA33:
+DA33 : 32 B1 BF 	"2  "		sta	XBFB1
+DA36 : C9 		" "		ret
+				;
+DA37				LDA37:
+DA37 : FB 		" "		ei
+DA38 : CD AB D9 	"   "		call	LD9AB
+DA3B : FE 08 		"  "		cpi	008H
+DA3D : C2 42 DA 	" B "		jnz	LDA42
+DA40 : B7 		" "		ora	a
+DA41 : C9 		" "		ret
+				;
+DA42				LDA42:
+DA42 : 21 5C DA 	"!\ "		lxi	h,t_d_chg
+DA45 : CD C5 D3 	"   "		call	LD3C5
+DA48 : 3A 04 00 	":  "		lda	CPMcurDsk
+DA4B : C6 41 		" A"		adi	041H
+DA4D : CD F0 C7 	"   "		call	OutVec
+DA50 : 21 76 DA 	"!v "		lxi	h,0DA76H
+DA53 : CD C5 D3 	"   "		call	LD3C5
+DA56 : CD F3 C7 	"   "		call	InVec
+DA59 : C3 6D D0 	" m "		jmp	wboot
+				;
+DA5C				t_d_chg:
+DA5C : 0D 0A 44 69 	"  Di"		db	"\x0D\x0ADiskette type in drive \x00: is changed.\x0D\x0APress any key to re-boot: \x07\x00"
+       73 6B 65 74 	"sket"
+       74 65 20 74 	"te t"
+       79 70 65 20 	"ype "
+       69 6E 20 64 	"in d"
+       72 69 76 65 	"rive"
+       20 00 3A 20 	"  : "
+       69 73 20 63 	"is c"
+       68 61 6E 67 	"hang"
+       65 64 2E 0D 	"ed. "
+       0A 50 72 65 	" Pre"
+       73 73 20 61 	"ss a"
+       6E 79 20 6B 	"ny k"
+       65 79 20 74 	"ey t"
+       6F 20 72 65 	"o re"
+       2D 62 6F 6F 	"-boo"
+       74 3A 20 07 	"t:  "
+       00 		" "
+				;
+DAA1				LDAA1:
+DAA1 : DB 7F 		"  "		in	07FH
+DAA3 : E6 01 		"  "		ani	001H
+DAA5 : C0 		" "		rnz
+DAA6 : F3 		" "		di
+DAA7 : 3E 02 		"> "		mvi	a,002H
+DAA9 : D3 74 		" t"		out	074H
+DAAB : 3E 00 		"> "		mvi	a,000H
+DAAD : D3 74 		" t"		out	074H
+DAAF : CD CD DA 	"   "		call	LDACD
+DAB2 : FB 		" "		ei
+DAB3 : C9 		" "		ret
+				;
+DAB4				LDAB4:
+DAB4 : F3 		" "		di
+DAB5 : 3E 04 		"> "		mvi	a,004H
+DAB7 : D3 74 		" t"		out	074H
+DAB9 : 3E 06 		"> "		mvi	a,006H
+DABB : D3 74 		" t"		out	074H
+DABD : 3E 04 		"> "		mvi	a,004H
+DABF : D3 74 		" t"		out	074H
+DAC1 : CD CD DA 	"   "		call	LDACD
+DAC4 : FB 		" "		ei
+DAC5 : C9 		" "		ret
+				;
+DAC6				LDAC6:
+DAC6 : C5 		" "		push	b
+DAC7 : 01 80 0C 	"   "		lxi	b,00C80H
+DACA : C3 E0 DA 	"   "		jmp	LDAE0
+				;
+DACD				LDACD:
+DACD : C5 		" "		push	b
+DACE : E5 		" "		push	h
+DACF : 3A 4E BE 	":N "		lda	d_netwrk
+DAD2 : E6 10 		"  "		ani	010H
+DAD4 : 2A B6 BF 	"*  "		lhld	XBFB6
+DAD7 : CA DD DA 	"   "		jz	LDADD
+DADA : 2A B8 BF 	"*  "		lhld	XBFB8
+DADD				LDADD:
+DADD : 44 		"D"		mov	b,h
+DADE : 4D 		"M"		mov	c,l
+DADF : E1 		" "		pop	h
+DAE0				LDAE0:
+DAE0 : 0B 		" "		dcx	b
+DAE1 : 78 		"x"		mov	a,b
+DAE2 : 00 		" "		nop
+DAE3 : B1 		" "		ora	c
+DAE4 : C2 E0 DA 	"   "		jnz	LDAE0
+DAE7 : C1 		" "		pop	b
+DAE8 : C9 		" "		ret
+				;
+DAE9				LDAE9:
+DAE9 : CD A6 DB 	"   "		call	LDBA6
+DAEC : CA DB F3 	"   "		jz	LF3DB
+DAEF : 32 54 BE 	"2T "		sta	XBE54
+DAF2 : 47 		"G"		mov	b,a
+DAF3 : 16 08 		"  "		mvi	d,008H
+DAF5 : 3A 55 BE 	":U "		lda	XBE55
+DAF8 : FE 00 		"  "		cpi	000H
+DAFA : CA FF DA 	"   "		jz	LDAFF
+DAFD : 16 88 		"  "		mvi	d,088H
+DAFF				LDAFF:
+DAFF : 21 52 BE 	"!R "		lxi	h,0BE52H
+DB02 : 72 		"r"		mov	m,d
+DB03 : AF 		" "		xra	a
+DB04 : 32 53 BE 	"2S "		sta	XBE53
+DB07 : F3 		" "		di
+DB08				LDB08:
+DB08 : CD C7 DB 	"   "		call	LDBC7
+DB0B : CA 08 DB 	"   "		jz	LDB08
+DB0E				LDB0E:
+DB0E : DB FD 		"  "		in	0FDH
+DB10 : B8 		" "		cmp	b
+DB11 : C2 08 DB 	"   "		jnz	LDB08
+DB14				LDB14:
+DB14 : CD C7 DB 	"   "		call	LDBC7
+DB17 : C2 14 DB 	"   "		jnz	LDB14
+DB1A : 3E 10 		"> "		mvi	a,010H
+DB1C : D3 FC 		"  "		out	0FCH
+DB1E : 0E 05 		"  "		mvi	c,005H
+DB20 : CD DB DB 	"   "		call	LDBDB
+DB23 : AF 		" "		xra	a
+DB24 : D3 FC 		"  "		out	0FCH
+DB26 : 0E 0A 		"  "		mvi	c,00AH
+DB28 : CD DB DB 	"   "		call	LDBDB
+DB2B : CD C7 DB 	"   "		call	LDBC7
+DB2E : C2 0E DB 	"   "		jnz	LDB0E
+DB31 : 11 52 BE 	" R "		lxi	d,0BE52H
+DB34 : 2A DF BE 	"*  "		lhld	XBEDF
+DB37 : EB 		" "		xchg
+DB38 : CD 48 DD 	" H "		call	LDD48
+DB3B : DB FD 		"  "		in	0FDH
+DB3D : FB 		" "		ei
+DB3E : B7 		" "		ora	a
+DB3F : C2 A1 DB 	"   "		jnz	LDBA1
+DB42 : 11 52 BE 	" R "		lxi	d,0BE52H
+DB45 : 2A DF BE 	"*  "		lhld	XBEDF
+DB48 : EB 		" "		xchg
+DB49 : CD 98 DD 	"   "		call	LDD98
+DB4C : C2 9C DB 	"   "		jnz	LDB9C
+DB4F : 3A 54 BE 	":T "		lda	XBE54
+DB52 : B8 		" "		cmp	b
+DB53 : C2 9C DB 	"   "		jnz	LDB9C
+DB56 : 3A 53 BE 	":S "		lda	XBE53
+DB59 : B7 		" "		ora	a
+DB5A : CA 9C DB 	"   "		jz	LDB9C
+DB5D : 3A 55 BE 	":U "		lda	XBE55
+DB60				LDB60:
+DB60 : 32 50 BE 	"2P "		sta	XBE50
+DB63 : B7 		" "		ora	a
+DB64 : C8 		" "		rz
+DB65 : F5 		" "		push	psw
+DB66 : 21 34 DE 	"!4 "		lxi	h,t_d_ner
+DB69 : CD C5 D3 	"   "		call	LD3C5
+DB6C : F1 		" "		pop	psw
+DB6D : FE A1 		"  "		cpi	0A1H
+DB6F : C2 78 DB 	" x "		jnz	LDB78
+DB72 : 21 03 DE 	"!  "		lxi	h,t_d_rod
+DB75 : C3 95 DB 	"   "		jmp	LDB95
+				;
+DB78				LDB78:
+DB78 : FE A2 		"  "		cpi	0A2H
+DB7A : C2 83 DB 	"   "		jnz	LDB83
+DB7D : 21 E6 DD 	"!  "		lxi	h,t_d_rot
+DB80 : C3 95 DB 	"   "		jmp	LDB95
+				;
+DB83				LDB83:
+DB83 : FE A4 		"  "		cpi	0A4H
+DB85 : C2 8E DB 	"   "		jnz	LDB8E
+DB88 : 21 F2 DD 	"!  "		lxi	h,t_d_bc
+DB8B : C3 95 DB 	"   "		jmp	LDB95
+				;
+DB8E				LDB8E:
+DB8E : 21 0E DE 	"!  "		lxi	h,t_d_bbk
+DB91 : CD C5 D3 	"   "		call	LD3C5
+DB94 : C9 		" "		ret
+				;
+DB95				LDB95:
+DB95 : CD C5 D3 	"   "		call	LD3C5
+DB98 : C3 00 00 	"   "		jmp	X0000
+DB9B : C9 		" "		ret
+				;
+DB9C				LDB9C:
+DB9C : 3E A0 		"> "		mvi	a,0A0H
+DB9E : C3 60 DB 	" ` "		jmp	LDB60
+				;
+DBA1				LDBA1:
+DBA1 : 3E A4 		"> "		mvi	a,0A4H
+DBA3 : C3 60 DB 	" ` "		jmp	LDB60
+				;
+DBA6				LDBA6:
+DBA6 : AF 		" "		xra	a
+DBA7 : D3 F2 		"  "		out	0F2H
+DBA9 : D3 F8 		"  "		out	0F8H
+DBAB : D3 FC 		"  "		out	0FCH
+DBAD : DB F1 		"  "		in	0F1H
+DBAF : E6 01 		"  "		ani	001H
+DBB1 : C8 		" "		rz
+DBB2 : AF 		" "		xra	a
+DBB3 : DB F1 		"  "		in	0F1H
+DBB5 : E6 60 		" `"		ani	060H
+DBB7 : 1F 		" "		rar
+DBB8 : 1F 		" "		rar
+DBB9 : 1F 		" "		rar
+DBBA : 1F 		" "		rar
+DBBB : 1F 		" "		rar
+DBBC : 47 		"G"		mov	b,a
+DBBD : AF 		" "		xra	a
+DBBE : DB F9 		"  "		in	0F9H
+DBC0 : E6 60 		" `"		ani	060H
+DBC2 : 1F 		" "		rar
+DBC3 : 1F 		" "		rar
+DBC4 : 1F 		" "		rar
+DBC5 : B0 		" "		ora	b
+DBC6 : C9 		" "		ret
+				;
+DBC7				LDBC7:
+DBC7 : DB F9 		"  "		in	0F9H
+DBC9 : E6 01 		"  "		ani	001H
+DBCB : C9 		" "		ret
+				;
+DBCC				LDBCC:
+DBCC : 79 		"y"		mov	a,c
+DBCD : BB 		" "		cmp	e
+DBCE : C2 D4 DB 	"   "		jnz	LDBD4
+DBD1 : 78 		"x"		mov	a,b
+DBD2 : BA 		" "		cmp	d
+DBD3 : C8 		" "		rz
+DBD4				LDBD4:
+DBD4 : 0A 		" "		ldax	b
+DBD5 : 77 		"w"		mov	m,a
+DBD6 : 03 		" "		inx	b
+DBD7 : 23 		"#"		inx	h
+DBD8 : C3 CC DB 	"   "		jmp	LDBCC
+				;
+DBDB				LDBDB:
+DBDB : 0D 		" "		dcr	c
+DBDC : C2 DB DB 	"   "		jnz	LDBDB
+DBDF : C9 		" "		ret
+				;
+DBE0				LDBE0:
+DBE0 : 47 		"G"		mov	b,a
+DBE1 : C5 		" "		push	b
+DBE2 : 21 46 DE 	"!F "		lxi	h,t_d_con
+DBE5 : CD C5 D3 	"   "		call	LD3C5
+DBE8 : CD E9 DC 	"   "		call	GetY_N
+DBEB : C1 		" "		pop	b
+DBEC : D0 		" "		rnc
+DBED : 0E 07 		"  "		mvi	c,007H
+DBEF				LDBEF:
+DBEF : 21 00 00 	"!  "		lxi	h,X0000
+DBF2				LDBF2:
+DBF2 : DB FD 		"  "		in	0FDH
+DBF4 : B8 		" "		cmp	b
+DBF5 : CA 0D DC 	"   "		jz	LDC0D
+DBF8 : 2B 		"+"		dcx	h
+DBF9 : 7D 		"}"		mov	a,l
+DBFA : B4 		" "		ora	h
+DBFB : C2 F2 DB 	"   "		jnz	LDBF2
+DBFE : 0D 		" "		dcr	c
+DBFF : C2 EF DB 	"   "		jnz	LDBEF
+DC02				LDC02:
+DC02 : 21 72 DE 	"!r "		lxi	h,t_d_mas
+DC05 : CD C5 D3 	"   "		call	LD3C5
+DC08 : AF 		" "		xra	a
+DC09 : 32 51 BE 	"2Q "		sta	XBE51
+DC0C : C9 		" "		ret
+				;
+DC0D				LDC0D:
+DC0D : 78 		"x"		mov	a,b
+DC0E : 32 51 BE 	"2Q "		sta	XBE51
+DC11 : 21 BD BF 	"!  "		lxi	h,XBFBD
+DC14 : 3E 00 		"> "		mvi	a,000H
+DC16 : CD 0F DD 	"   "		call	LDD0F
+DC19 : C2 02 DC 	"   "		jnz	LDC02
+DC1C : 3A BD BF 	":  "		lda	XBFBD
+DC1F : B7 		" "		ora	a
+DC20 : CA 02 DC 	"   "		jz	LDC02
+DC23 : 4F 		"O"		mov	c,a
+DC24 : D6 09 		"  "		sui	009H
+DC26 : DA 34 DC 	" 4 "		jc	LDC34
+DC29 : 21 37 C0 	"!7 "		lxi	h,0C037H
+DC2C : 3E 01 		"> "		mvi	a,001H
+DC2E : CD 0F DD 	"   "		call	LDD0F
+DC31 : C2 02 DC 	"   "		jnz	LDC02
+DC34				LDC34:
+DC34 : 3E AA 		"> "		mvi	a,0AAH
+DC36 : 32 DA BE 	"2  "		sta	XBEDA
+DC39 : 3A BD BF 	":  "		lda	XBFBD
+DC3C : 4F 		"O"		mov	c,a
+DC3D : 11 F8 BE 	"   "		lxi	d,XBEF8
+DC40 : 2A A8 BF 	"*  "		lhld	XBFA8
+DC43 : 26 00 		"& "		mvi	h,000H
+DC45 : 19 		" "		dad	d
+DC46 : 3A DA BE 	":  "		lda	XBEDA
+DC49				LDC49:
+DC49 : 77 		"w"		mov	m,a
+DC4A : 23 		"#"		inx	h
+DC4B : 0D 		" "		dcr	c
+DC4C : C2 49 DC 	" I "		jnz	LDC49
+DC4F : 3A BD BF 	":  "		lda	XBFBD
+DC52 : 4F 		"O"		mov	c,a
+DC53 : 06 00 		"  "		mvi	b,000H
+DC55				LDC55:
+DC55 : 3E 00 		"> "		mvi	a,000H
+DC57 : 80 		" "		add	b
+DC58 : 57 		"W"		mov	d,a
+DC59 : 87 		" "		add	a
+DC5A : 87 		" "		add	a
+DC5B : 87 		" "		add	a
+DC5C : 87 		" "		add	a
+DC5D : 5F 		"_"		mov	e,a
+DC5E : 92 		" "		sub	d
+DC5F : 6F 		"o"		mov	l,a
+DC60 : 26 00 		"& "		mvi	h,000H
+DC62 : E5 		" "		push	h
+DC63 : 16 00 		"  "		mvi	d,000H
+DC65 : 21 AF C0 	"!  "		lxi	h,dpbase
+DC68 : 19 		" "		dad	d
+DC69 : AF 		" "		xra	a
+DC6A : 77 		"w"		mov	m,a
+DC6B : 23 		"#"		inx	h
+DC6C : 77 		"w"		mov	m,a
+DC6D : 23 		"#"		inx	h
+DC6E : 77 		"w"		mov	m,a
+DC6F : 23 		"#"		inx	h
+DC70 : 77 		"w"		mov	m,a
+DC71 : 23 		"#"		inx	h
+DC72 : 77 		"w"		mov	m,a
+DC73 : 23 		"#"		inx	h
+DC74 : 77 		"w"		mov	m,a
+DC75 : 23 		"#"		inx	h
+DC76 : 77 		"w"		mov	m,a
+DC77 : 23 		"#"		inx	h
+DC78 : 77 		"w"		mov	m,a
+DC79 : 23 		"#"		inx	h
+DC7A : 11 28 BF 	" ( "		lxi	d,0BF28H
+DC7D : 73 		"s"		mov	m,e
+DC7E : 23 		"#"		inx	h
+DC7F : 72 		"r"		mov	m,d
+DC80 : 23 		"#"		inx	h
+DC81 : D1 		" "		pop	d
+DC82 : E5 		" "		push	h
+DC83 : 21 BF BF 	"!  "		lxi	h,XBFBF
+DC86 : 19 		" "		dad	d
+DC87 : E5 		" "		push	h
+DC88 : 23 		"#"		inx	h
+DC89 : 23 		"#"		inx	h
+DC8A : CD 3B BE 	" ; "		call	LBE3B
+DC8D : 32 5D BE 	"2] "		sta	XBE5D
+DC90 : 23 		"#"		inx	h
+DC91 : 23 		"#"		inx	h
+DC92 : 23 		"#"		inx	h
+DC93 : CD 3B BE 	" ; "		call	LBE3B
+DC96 : 32 60 BE 	"2` "		sta	XBE60
+DC99 : 23 		"#"		inx	h
+DC9A : CD 3B BE 	" ; "		call	LBE3B
+DC9D : 32 61 BE 	"2a "		sta	XBE61
+DCA0 : 23 		"#"		inx	h
+DCA1 : 23 		"#"		inx	h
+DCA2 : 23 		"#"		inx	h
+DCA3 : 23 		"#"		inx	h
+DCA4 : CD 3B BE 	" ; "		call	LBE3B
+DCA7 : 32 66 BE 	"2f "		sta	XBE66
+DCAA : 23 		"#"		inx	h
+DCAB : CD 3B BE 	" ; "		call	LBE3B
+DCAE : 32 67 BE 	"2g "		sta	XBE67
+DCB1 : E1 		" "		pop	h
+DCB2 : EB 		" "		xchg
+DCB3 : E1 		" "		pop	h
+DCB4 : 73 		"s"		mov	m,e
+DCB5 : 23 		"#"		inx	h
+DCB6 : 72 		"r"		mov	m,d
+DCB7 : 23 		"#"		inx	h
+DCB8 : E5 		" "		push	h
+DCB9 : 2A 66 BE 	"*f "		lhld	XBE66
+DCBC : CD CC D5 	"   "		call	LD5CC
+DCBF : EB 		" "		xchg
+DCC0 : E1 		" "		pop	h
+DCC1 : 73 		"s"		mov	m,e
+DCC2 : 23 		"#"		inx	h
+DCC3 : 72 		"r"		mov	m,d
+DCC4 : 23 		"#"		inx	h
+DCC5 : E5 		" "		push	h
+DCC6 : 78 		"x"		mov	a,b
+DCC7 : C5 		" "		push	b
+DCC8 : 2A 60 BE 	"*` "		lhld	XBE60
+DCCB : CD 8D D6 	"   "		call	LD68D
+DCCE : CD CC D5 	"   "		call	LD5CC
+DCD1 : EB 		" "		xchg
+DCD2 : C1 		" "		pop	b
+DCD3 : E1 		" "		pop	h
+DCD4 : 73 		"s"		mov	m,e
+DCD5 : 23 		"#"		inx	h
+DCD6 : 72 		"r"		mov	m,d
+DCD7 : 23 		"#"		inx	h
+DCD8 : 04 		" "		inr	b
+DCD9 : 0D 		" "		dcr	c
+DCDA : C2 55 DC 	" U "		jnz	LDC55
+DCDD : 3A A8 BF 	":  "		lda	XBFA8
+DCE0 : 4F 		"O"		mov	c,a
+DCE1 : 3A BD BF 	":  "		lda	XBFBD
+DCE4 : 81 		" "		add	c
+DCE5 : 32 A8 BF 	"2  "		sta	XBFA8
+DCE8 : C9 		" "		ret
+				;
+DCE9				GetY_N:
+DCE9 : CD F3 C7 	"   "		call	InVec
+DCEC : E6 5F 		" _"		ani	05FH
+DCEE : FE 59 		" Y"		cpi	059H
+DCF0 : CA F9 DC 	"   "		jz	LDCF9
+DCF3 : FE 4E 		" N"		cpi	04EH
+DCF5 : C2 E9 DC 	"   "		jnz	GetY_N
+DCF8 : C9 		" "		ret
+				;
+DCF9				LDCF9:
+DCF9 : 37 		"7"		stc
+DCFA : C9 		" "		ret
+				;
+DCFB				LDCFB:
+DCFB : C6 30 		" 0"		adi	030H
+DCFD : FE 3A 		" :"		cpi	03AH
+DCFF : DA 0B DD 	"   "		jc	LDD0B
+DD02 : F5 		" "		push	psw
+DD03 : 3E 01 		"> "		mvi	a,001H
+DD05 : CD F0 C7 	"   "		call	OutVec
+DD08 : F1 		" "		pop	psw
+DD09 : D6 0A 		"  "		sui	00AH
+DD0B				LDD0B:
+DD0B : CD F0 C7 	"   "		call	OutVec
+DD0E : C9 		" "		ret
+				;
+DD0F				LDD0F:
+DD0F : 22 DF BE 	""  "		shld	XBEDF
+DD12 : 32 59 BE 	"2Y "		sta	XBE59
+DD15 : 21 00 00 	"!  "		lxi	h,X0000
+DD18 : 22 57 BE 	""W "		shld	XBE57
+DD1B : 3E 00 		"> "		mvi	a,000H
+DD1D : 32 56 BE 	"2V "		sta	XBE56
+DD20 : CD 25 DD 	" % "		call	LDD25
+DD23 : B7 		" "		ora	a
+DD24 : C9 		" "		ret
+				;
+DD25				LDD25:
+DD25 : 3E 00 		"> "		mvi	a,000H
+DD27 : C3 2C DD 	" , "		jmp	LDD2C
+				;
+DD2A				LDD2A:
+DD2A : 3E 01 		"> "		mvi	a,001H
+DD2C				LDD2C:
+DD2C : 32 55 BE 	"2U "		sta	XBE55
+DD2F : CD E9 DA 	"   "		call	LDAE9
+DD32 : 3A 50 BE 	":P "		lda	XBE50
+DD35 : C9 		" "		ret
+				;
+DD36				LDD36:
+DD36 : F5 		" "		push	psw
+DD37 : 21 91 DE 	"!  "		lxi	h,t_d_cpn
+DD3A : CD C5 D3 	"   "		call	LD3C5
+DD3D : F1 		" "		pop	psw
+DD3E : CD FB DC 	"   "		call	LDCFB
+DD41 : 21 DF D1 	"!  "		lxi	h,punch
+DD44 : 22 10 BE 	""  "		shld	XBE10
+DD47 : C9 		" "		ret
+				;
+DD48				LDD48:
+DD48 : F3 		" "		di
+DD49 : E5 		" "		push	h
+DD4A : D5 		" "		push	d
+DD4B : C5 		" "		push	b
+DD4C : D3 F2 		"  "		out	0F2H
+DD4E : EB 		" "		xchg
+DD4F : 1A 		" "		ldax	d
+DD50 : 4F 		"O"		mov	c,a
+DD51 : 06 00 		"  "		mvi	b,000H
+DD53				LDD53:
+DD53 : 1A 		" "		ldax	d
+DD54 : CD 72 DD 	" r "		call	LDD72
+DD57 : 0D 		" "		dcr	c
+DD58 : 79 		"y"		mov	a,c
+DD59 : CA 65 DD 	" e "		jz	LDD65
+DD5C : FE 80 		"  "		cpi	080H
+DD5E : C2 53 DD 	" S "		jnz	LDD53
+DD61 : EB 		" "		xchg
+DD62 : C3 53 DD 	" S "		jmp	LDD53
+				;
+DD65				LDD65:
+DD65 : 78 		"x"		mov	a,b
+DD66 : CD 72 DD 	" r "		call	LDD72
+DD69 : C1 		" "		pop	b
+DD6A : D1 		" "		pop	d
+DD6B : E1 		" "		pop	h
+DD6C : AF 		" "		xra	a
+DD6D : D3 FC 		"  "		out	0FCH
+DD6F : D3 F8 		"  "		out	0F8H
+DD71 : C9 		" "		ret
+				;
+DD72				LDD72:
+DD72 : D3 F8 		"  "		out	0F8H
+DD74 : A8 		" "		xra	b
+DD75 : 47 		"G"		mov	b,a
+DD76 : 3E 20 		"> "		mvi	a,020H
+DD78 : D3 FC 		"  "		out	0FCH
+DD7A : E3 		" "		xthl
+DD7B : E3 		" "		xthl
+DD7C : AF 		" "		xra	a
+DD7D : D3 FC 		"  "		out	0FCH
+DD7F : 13 		" "		inx	d
+DD80 : E3 		" "		xthl
+DD81 : E3 		" "		xthl
+DD82 : C9 		" "		ret
+				;
+DD83				LDD83:
+DD83 : DB F9 		"  "		in	0F9H
+DD85 : E6 80 		"  "		ani	080H
+DD87 : CA 83 DD 	"   "		jz	LDD83
+DD8A : DB FD 		"  "		in	0FDH
+DD8C : F5 		" "		push	psw
+DD8D : A8 		" "		xra	b
+DD8E : 47 		"G"		mov	b,a
+DD8F				LDD8F:
+DD8F : DB F9 		"  "		in	0F9H
+DD91 : E6 80 		"  "		ani	080H
+DD93 : C2 8F DD 	"   "		jnz	LDD8F
+DD96 : F1 		" "		pop	psw
+DD97 : C9 		" "		ret
+				;
+DD98				LDD98:
+DD98 : F3 		" "		di
+DD99 : E5 		" "		push	h
+DD9A : D5 		" "		push	d
+DD9B : C5 		" "		push	b
+DD9C : D3 F2 		"  "		out	0F2H
+DD9E : 06 00 		"  "		mvi	b,000H
+DDA0 : EB 		" "		xchg
+DDA1 : CD 83 DD 	"   "		call	LDD83
+DDA4 : 12 		" "		stax	d
+DDA5 : 13 		" "		inx	d
+DDA6 : 3D 		"="		dcr	a
+DDA7 : 4F 		"O"		mov	c,a
+DDA8				LDDA8:
+DDA8 : CD 83 DD 	"   "		call	LDD83
+DDAB : 12 		" "		stax	d
+DDAC : 13 		" "		inx	d
+DDAD : 0D 		" "		dcr	c
+DDAE : 79 		"y"		mov	a,c
+DDAF : CA BB DD 	"   "		jz	LDDBB
+DDB2 : FE 80 		"  "		cpi	080H
+DDB4 : C2 A8 DD 	"   "		jnz	LDDA8
+DDB7 : EB 		" "		xchg
+DDB8 : C3 A8 DD 	"   "		jmp	LDDA8
+				;
+DDBB				LDDBB:
+DDBB : 7F 		" "		mov	a,a
+DDBC : 7F 		" "		mov	a,a
+DDBD : CD 83 DD 	"   "		call	LDD83
+DDC0 : 78 		"x"		mov	a,b
+DDC1 : B7 		" "		ora	a
+DDC2 : 00 		" "		nop
+DDC3 : 7F 		" "		mov	a,a
+DDC4 : 7F 		" "		mov	a,a
+DDC5 : C1 		" "		pop	b
+DDC6 : D1 		" "		pop	d
+DDC7 : E1 		" "		pop	h
+DDC8 : 3E 00 		"> "		mvi	a,000H
+DDCA : D3 FC 		"  "		out	0FCH
+DDCC : D3 F8 		"  "		out	0F8H
+DDCE : FB 		" "		ei
+DDCF : C9 		" "		ret
+				;
+DDD0				LDDD0:
+DDD0 : F3 		" "		di
+DDD1 : D3 F2 		"  "		out	0F2H
+DDD3 : D3 F8 		"  "		out	0F8H
+DDD5 : 3E 10 		"> "		mvi	a,010H
+DDD7 : D3 FC 		"  "		out	0FCH
+DDD9 : E3 		" "		xthl
+DDDA : E3 		" "		xthl
+DDDB : AF 		" "		xra	a
+DDDC : D3 FC 		"  "		out	0FCH
+DDDE : E3 		" "		xthl
+DDDF : E3 		" "		xthl
+DDE0 : 00 		" "		nop
+DDE1 : 00 		" "		nop
+DDE2 : D3 F8 		"  "		out	0F8H
+DDE4 : FB 		" "		ei
+DDE5 : C9 		" "		ret
+				;
+DDE6				t_d_rot:
+DDE6 : 52 2F 4F 20 	"R/O "		db	"R/O track\x0A\x0D\x00"
+       74 72 61 63 	"trac"
+       6B 0A 0D 00 	"k   "
+DDF2				t_d_bc:
+DDF2 : 42 61 64 20 	"Bad "		db	"Bad connection\x0A\x0D\x00"
+       63 6F 6E 6E 	"conn"
+       65 63 74 69 	"ecti"
+       6F 6E 0A 0D 	"on  "
+       00 		" "
+DE03				t_d_rod:
+DE03 : 52 2F 4F 20 	"R/O "		db	"R/O disk\x0A\x0D\x00"
+       64 69 73 6B 	"disk"
+       0A 0D 00 	"   "
+DE0E				t_d_bbk:
+DE0E : 42 61 64 20 	"Bad "		db	"Bad block\x0A\x0D\x00"
+       62 6C 6F 63 	"bloc"
+       6B 0A 0D 00 	"k   "
+DE1A				t_d_nc:
+DE1A : 4E 65 74 77 	"Netw"		db	"Network is not connected\x0A"
+       6F 72 6B 20 	"ork "
+       69 73 20 6E 	"is n"
+       6F 74 20 63 	"ot c"
+       6F 6E 6E 65 	"onne"
+       63 74 65 64 	"cted"
+       0A 		" "
+				;
+DE33 : 00 		" "		nop
+				;
+DE34				t_d_ner:
+DE34 : 0A 0D 4E 65 	"  Ne"		db	"\x0A\x0DNetwork Error: \x00"
+       74 77 6F 72 	"twor"
+       6B 20 45 72 	"k Er"
+       72 6F 72 3A 	"ror:"
+       20 00 		"  "
+DE46				t_d_con:
+DE46 : 0A 0D 44 6F 	"  Do"		db	"\x0A\x0DDo You want to work with Network (y/n) ? \x00"
+       20 59 6F 75 	" You"
+       20 77 61 6E 	" wan"
+       74 20 74 6F 	"t to"
+       20 77 6F 72 	" wor"
+       6B 20 77 69 	"k wi"
+       74 68 20 4E 	"th N"
+       65 74 77 6F 	"etwo"
+       72 6B 20 28 	"rk ("
+       79 2F 6E 29 	"y/n)"
+       20 3F 20 00 	" ?  "
+DE72				t_d_mas:
+DE72 : 0A 0D 43 61 	"  Ca"		db	"\x0A\x0DCannot connect with Master\x0A\x0D\x00"
+       6E 6E 6F 74 	"nnot"
+       20 63 6F 6E 	" con"
+       6E 65 63 74 	"nect"
+       20 77 69 74 	" wit"
+       68 20 4D 61 	"h Ma"
+       73 74 65 72 	"ster"
+       0A 0D 00 	"   "
+DE91				t_d_cpn:
+DE91 : 1B 2A 2A 20 	" ** "		db	"\x1B** T-CP/NET *\x1B=\x03ASlave #\x00"
+       54 2D 43 50 	"T-CP"
+       2F 4E 45 54 	"/NET"
+       20 2A 1B 3D 	" * ="
+       03 41 53 6C 	" ASl"
+       61 76 65 20 	"ave "
+       23 00 		"# "
+				;
+DEAB				bios_vec:
+DEAB : C3 50 D0 	" P "		jmp	boot
+DEAE : C3 6D D0 	" m "		jmp	wboot
+DEB1 : C3 95 D1 	"   "		jmp	constat
+DEB4 : C3 9E D1 	"   "		jmp	conin
+DEB7 : C3 A1 D1 	"   "		jmp	conout
+DEBA : C3 BE D1 	"   "		jmp	list
+DEBD : C3 DF D1 	"   "		jmp	punch
+DEC0 : C3 DD D1 	"   "		jmp	reader
+DEC3 : C3 E0 D1 	"   "		jmp	home
+DEC6 : C3 F0 D1 	"   "		jmp	seldsk
+DEC9 : C3 50 D2 	" P "		jmp	settrk
+DECC : C3 64 D2 	" d "		jmp	setsec
+DECF : C3 85 D2 	"   "		jmp	setDMA
+DED2 : C3 8B D2 	"   "		jmp	read
+DED5 : C3 CB D2 	"   "		jmp	write
+DED8 : C3 B5 D1 	"   "		jmp	listst
+DEDB : C3 75 D2 	" u "		jmp	sectran
+DEDE : C3 67 D6 	" g "		jmp	somewhere
+				;
+DEE1 : 5E 		"^"		mov	e,m
+DEE2 : 23 		"#"		inx	h
+DEE3 : 56 		"V"		mov	d,m
+DEE4 : EB 		" "		xchg
+DEE5 : C9 		" "		ret
+				;
+DEE6 : 7E 		"~"		mov	a,m
+DEE7 : C9 		" "		ret
+				;
+DEE8				t_empty:
+DEE8				bv_end:
+DEE8 : FF 		" "		db	0FFH
+DEE9 : FF 		" "		db	0FFH
+DEEA : FF 		" "		db	0FFH
+DEEB : FF 		" "		db	0FFH
+DEEC : FF 		" "		db	0FFH
+DEED : FF 		" "		db	0FFH
+DEEE : FF 		" "		db	0FFH
+DEEF : FF 		" "		db	0FFH
+DEF0 : FF 		" "		db	0FFH
+DEF1 : FF 		" "		db	0FFH
+DEF2 : FF 		" "		db	0FFH
+DEF3 : FF 		" "		db	0FFH
+DEF4 : FF 		" "		db	0FFH
+DEF5 : FF 		" "		db	0FFH
+DEF6 : FF 		" "		db	0FFH
+DEF7 : FF 		" "		db	0FFH
+DEF8 : FF 		" "		db	0FFH
+DEF9 : FF 		" "		db	0FFH
+DEFA : FF 		" "		db	0FFH
+DEFB : FF 		" "		db	0FFH
+DEFC : FF 		" "		db	0FFH
+DEFD : FF 		" "		db	0FFH
+DEFE : FF 		" "		db	0FFH
+DEFF : FF 		" "		db	0FFH
+DF00 : FF 		" "		db	0FFH
+DF01 : FF 		" "		db	0FFH
+DF02 : FF 		" "		db	0FFH
+DF03 : FF 		" "		db	0FFH
+DF04 : FF 		" "		db	0FFH
+DF05 : FF 		" "		db	0FFH
+DF06 : FF 		" "		db	0FFH
+DF07 : FF 		" "		db	0FFH
+DF08 : FF 		" "		db	0FFH
+DF09 : FF 		" "		db	0FFH
+DF0A : FF 		" "		db	0FFH
+DF0B : FF 		" "		db	0FFH
+DF0C : FF 		" "		db	0FFH
+DF0D : FF 		" "		db	0FFH
+DF0E : FF 		" "		db	0FFH
+DF0F : FF 		" "		db	0FFH
+DF10 : FF 		" "		db	0FFH
+DF11 : FF 		" "		db	0FFH
+DF12 : FF 		" "		db	0FFH
+DF13 : FF 		" "		db	0FFH
+DF14 : FF 		" "		db	0FFH
+DF15 : FF 		" "		db	0FFH
+DF16 : FF 		" "		db	0FFH
+DF17 : FF 		" "		db	0FFH
+DF18 : FF 		" "		db	0FFH
+DF19 : FF 		" "		db	0FFH
+DF1A : FF 		" "		db	0FFH
+DF1B : FF 		" "		db	0FFH
+DF1C : FF 		" "		db	0FFH
+DF1D : FF 		" "		db	0FFH
+DF1E : FF 		" "		db	0FFH
+DF1F : FF 		" "		db	0FFH
+DF20 : FF 		" "		db	0FFH
+DF21 : FF 		" "		db	0FFH
+DF22 : FF 		" "		db	0FFH
+DF23 : FF 		" "		db	0FFH
+DF24 : FF 		" "		db	0FFH
+DF25 : FF 		" "		db	0FFH
+DF26 : FF 		" "		db	0FFH
+DF27 : FF 		" "		db	0FFH
+DF28 : FF 		" "		db	0FFH
+DF29 : FF 		" "		db	0FFH
+DF2A : FF 		" "		db	0FFH
+DF2B : FF 		" "		db	0FFH
+DF2C : FF 		" "		db	0FFH
+DF2D : FF 		" "		db	0FFH
+DF2E : FF 		" "		db	0FFH
+DF2F : FF 		" "		db	0FFH
+DF30 : FF 		" "		db	0FFH
+DF31 : FF 		" "		db	0FFH
+DF32 : FF 		" "		db	0FFH
+DF33 : FF 		" "		db	0FFH
+DF34 : FF 		" "		db	0FFH
+DF35 : FF 		" "		db	0FFH
+DF36 : FF 		" "		db	0FFH
+DF37 : FF 		" "		db	0FFH
+DF38 : FF 		" "		db	0FFH
+DF39 : FF 		" "		db	0FFH
+DF3A : FF 		" "		db	0FFH
+DF3B : FF 		" "		db	0FFH
+DF3C : FF 		" "		db	0FFH
+DF3D : FF 		" "		db	0FFH
+DF3E : FF 		" "		db	0FFH
+DF3F : FF 		" "		db	0FFH
+DF40 : FF 		" "		db	0FFH
+DF41 : FF 		" "		db	0FFH
+DF42 : FF 		" "		db	0FFH
+DF43 : FF 		" "		db	0FFH
+DF44 : FF 		" "		db	0FFH
+DF45 : FF 		" "		db	0FFH
+DF46 : FF 		" "		db	0FFH
+DF47 : FF 		" "		db	0FFH
+DF48 : FF 		" "		db	0FFH
+DF49 : FF 		" "		db	0FFH
+DF4A : FF 		" "		db	0FFH
+DF4B : FF 		" "		db	0FFH
+DF4C : FF 		" "		db	0FFH
+DF4D : FF 		" "		db	0FFH
+DF4E : FF 		" "		db	0FFH
+DF4F : FF 		" "		db	0FFH
+DF50 : FF 		" "		db	0FFH
+DF51 : FF 		" "		db	0FFH
+DF52 : FF 		" "		db	0FFH
+DF53 : FF 		" "		db	0FFH
+DF54 : FF 		" "		db	0FFH
+DF55 : FF 		" "		db	0FFH
+DF56 : FF 		" "		db	0FFH
+DF57 : FF 		" "		db	0FFH
+DF58 : FF 		" "		db	0FFH
+DF59 : FF 		" "		db	0FFH
+DF5A : FF 		" "		db	0FFH
+DF5B : FF 		" "		db	0FFH
+DF5C : FF 		" "		db	0FFH
+DF5D : FF 		" "		db	0FFH
+DF5E : FF 		" "		db	0FFH
+DF5F : FF 		" "		db	0FFH
+DF60 : FF 		" "		db	0FFH
+DF61 : FF 		" "		db	0FFH
+DF62 : FF 		" "		db	0FFH
+DF63 : FF 		" "		db	0FFH
+DF64 : FF 		" "		db	0FFH
+DF65 : FF 		" "		db	0FFH
+DF66 : FF 		" "		db	0FFH
+DF67 : FF 		" "		db	0FFH
+DF68 : FF 		" "		db	0FFH
+DF69 : FF 		" "		db	0FFH
+DF6A : FF 		" "		db	0FFH
+DF6B : FF 		" "		db	0FFH
+DF6C : FF 		" "		db	0FFH
+DF6D : FF 		" "		db	0FFH
+DF6E : FF 		" "		db	0FFH
+DF6F : FF 		" "		db	0FFH
+DF70 : FF 		" "		db	0FFH
+DF71 : FF 		" "		db	0FFH
+DF72 : FF 		" "		db	0FFH
+DF73 : FF 		" "		db	0FFH
+DF74 : FF 		" "		db	0FFH
+DF75 : FF 		" "		db	0FFH
+DF76 : FF 		" "		db	0FFH
+DF77 : FF 		" "		db	0FFH
+DF78 : FF 		" "		db	0FFH
+DF79 : FF 		" "		db	0FFH
+DF7A : FF 		" "		db	0FFH
+DF7B : FF 		" "		db	0FFH
+DF7C : FF 		" "		db	0FFH
+DF7D : FF 		" "		db	0FFH
+DF7E : FF 		" "		db	0FFH
+DF7F : FF 		" "		db	0FFH
+DF80 : FF 		" "		db	0FFH
+DF81 : FF 		" "		db	0FFH
+DF82 : FF 		" "		db	0FFH
+DF83 : FF 		" "		db	0FFH
+DF84 : FF 		" "		db	0FFH
+DF85 : FF 		" "		db	0FFH
+DF86 : FF 		" "		db	0FFH
+DF87 : FF 		" "		db	0FFH
+DF88 : FF 		" "		db	0FFH
+DF89 : FF 		" "		db	0FFH
+DF8A : FF 		" "		db	0FFH
+DF8B : FF 		" "		db	0FFH
+DF8C : FF 		" "		db	0FFH
+DF8D : FF 		" "		db	0FFH
+DF8E : FF 		" "		db	0FFH
+DF8F : FF 		" "		db	0FFH
+DF90 : FF 		" "		db	0FFH
+DF91 : FF 		" "		db	0FFH
+DF92 : FF 		" "		db	0FFH
+DF93 : FF 		" "		db	0FFH
+DF94 : FF 		" "		db	0FFH
+DF95 : FF 		" "		db	0FFH
+DF96 : FF 		" "		db	0FFH
+DF97 : FF 		" "		db	0FFH
+DF98 : FF 		" "		db	0FFH
+DF99 : FF 		" "		db	0FFH
+DF9A : FF 		" "		db	0FFH
+DF9B : FF 		" "		db	0FFH
+DF9C : FF 		" "		db	0FFH
+DF9D : FF 		" "		db	0FFH
+DF9E : FF 		" "		db	0FFH
+DF9F : FF 		" "		db	0FFH
+DFA0 : FF 		" "		db	0FFH
+DFA1 : FF 		" "		db	0FFH
+DFA2 : FF 		" "		db	0FFH
+DFA3 : FF 		" "		db	0FFH
+DFA4 : FF 		" "		db	0FFH
+DFA5 : FF 		" "		db	0FFH
+DFA6 : FF 		" "		db	0FFH
+DFA7 : FF 		" "		db	0FFH
+DFA8 : FF 		" "		db	0FFH
+DFA9 : FF 		" "		db	0FFH
+DFAA : FF 		" "		db	0FFH
+DFAB : FF 		" "		db	0FFH
+DFAC : FF 		" "		db	0FFH
+DFAD : FF 		" "		db	0FFH
+DFAE : FF 		" "		db	0FFH
+DFAF : FF 		" "		db	0FFH
+DFB0 : FF 		" "		db	0FFH
+DFB1 : FF 		" "		db	0FFH
+DFB2 : FF 		" "		db	0FFH
+DFB3 : FF 		" "		db	0FFH
+DFB4 : FF 		" "		db	0FFH
+DFB5 : FF 		" "		db	0FFH
+DFB6 : FF 		" "		db	0FFH
+DFB7 : FF 		" "		db	0FFH
+DFB8 : FF 		" "		db	0FFH
+DFB9 : FF 		" "		db	0FFH
+DFBA : FF 		" "		db	0FFH
+DFBB : FF 		" "		db	0FFH
+DFBC : FF 		" "		db	0FFH
+DFBD : FF 		" "		db	0FFH
+DFBE : FF 		" "		db	0FFH
+DFBF : FF 		" "		db	0FFH
+DFC0 : FF 		" "		db	0FFH
+DFC1 : FF 		" "		db	0FFH
+DFC2 : FF 		" "		db	0FFH
+DFC3 : FF 		" "		db	0FFH
+DFC4 : FF 		" "		db	0FFH
+DFC5 : FF 		" "		db	0FFH
+DFC6 : FF 		" "		db	0FFH
+DFC7 : FF 		" "		db	0FFH
+DFC8 : FF 		" "		db	0FFH
+DFC9 : FF 		" "		db	0FFH
+DFCA : FF 		" "		db	0FFH
+DFCB : FF 		" "		db	0FFH
+DFCC : FF 		" "		db	0FFH
+DFCD : FF 		" "		db	0FFH
+DFCE : FF 		" "		db	0FFH
+DFCF : FF 		" "		db	0FFH
+DFD0 : FF 		" "		db	0FFH
+DFD1 : FF 		" "		db	0FFH
+DFD2 : FF 		" "		db	0FFH
+DFD3 : FF 		" "		db	0FFH
+DFD4 : FF 		" "		db	0FFH
+DFD5 : FF 		" "		db	0FFH
+DFD6 : FF 		" "		db	0FFH
+DFD7 : FF 		" "		db	0FFH
+DFD8 : FF 		" "		db	0FFH
+DFD9 : FF 		" "		db	0FFH
+DFDA : FF 		" "		db	0FFH
+DFDB : FF 		" "		db	0FFH
+DFDC : FF 		" "		db	0FFH
+DFDD : FF 		" "		db	0FFH
+DFDE : FF 		" "		db	0FFH
+DFDF : FF 		" "		db	0FFH
+DFE0 : FF 		" "		db	0FFH
+DFE1 : FF 		" "		db	0FFH
+DFE2 : FF 		" "		db	0FFH
+DFE3 : FF 		" "		db	0FFH
+DFE4 : FF 		" "		db	0FFH
+DFE5 : FF 		" "		db	0FFH
+DFE6 : FF 		" "		db	0FFH
+DFE7 : FF 		" "		db	0FFH
+DFE8 : FF 		" "		db	0FFH
+DFE9 : FF 		" "		db	0FFH
+DFEA : FF 		" "		db	0FFH
+DFEB : FF 		" "		db	0FFH
+DFEC : FF 		" "		db	0FFH
+DFED : FF 		" "		db	0FFH
+DFEE : FF 		" "		db	0FFH
+DFEF : FF 		" "		db	0FFH
+DFF0 : FF 		" "		db	0FFH
+DFF1 : FF 		" "		db	0FFH
+DFF2 : FF 		" "		db	0FFH
+DFF3 : FF 		" "		db	0FFH
+DFF4 : FF 		" "		db	0FFH
+DFF5 : FF 		" "		db	0FFH
+DFF6 : FF 		" "		db	0FFH
+DFF7 : FF 		" "		db	0FFH
+DFF8 : FF 		" "		db	0FFH
+DFF9 : FF 		" "		db	0FFH
+DFFA : FF 		" "		db	0FFH
+DFFB : FF 		" "		db	0FFH
+DFFC : FF 		" "		db	0FFH
+DFFD : FF 		" "		db	0FFH
+DFFE : FF 		" "		db	0FFH
+DFFF : FF 		" "		db	0FFH
+
+;--------------------------------------------------------------
+Symbol table
+============
+
+Value	Type	Name
+-----	----	----
+0000	 04	X0000
+0001	 04	X0001
+0003	 04	X0003
+0004	 04	CPMcurDsk
+0005	 04	X0005
+0006	 04	X0006
+0038	 04	L0038
+0225	 04	X0225
+A800	 04	LA800
+B357	 04	sekdsk
+B358	 04	sektrk
+B35A	 04	seksec
+B35B	 04	dmaadr
+BE00	 04	r_boot
+BE03	 04	r_wboot
+BE06	 04	r_constat
+BE09	 04	r_conin
+BE0C	 04	r_conout
+BE0F	 04	r_list
+BE10	 04	XBE10
+BE12	 04	r_punch
+BE15	 04	r_reader
+BE18	 04	r_home
+BE1B	 04	r_seldsk
+BE1E	 04	r_settrk
+BE21	 04	r_setsec
+BE24	 04	r_setDMA
+BE27	 04	r_read
+BE2A	 04	r_write
+BE2D	 04	r_listst
+BE30	 04	r_sectran
+BE33	 04	r_somewhere
+BE36	 04	LBE36
+BE3B	 04	LBE3B
+BE3F	 04	XBE3F
+BE40	 04	XBE40
+BE41	 04	XBE41
+BE43	 04	XBE43
+BE44	 04	XBE44
+BE45	 04	XBE45
+BE4D	 04	XBE4D
+BE4E	 04	d_netwrk
+BE4F	 04	XBE4F
+BE50	 04	XBE50
+BE51	 04	XBE51
+BE53	 04	XBE53
+BE54	 04	XBE54
+BE55	 04	XBE55
+BE56	 04	XBE56
+BE57	 04	XBE57
+BE59	 04	XBE59
+BE5D	 04	XBE5D
+BE60	 04	XBE60
+BE61	 04	XBE61
+BE66	 04	XBE66
+BE67	 04	XBE67
+BEDA	 04	XBEDA
+BEDB	 04	XBEDB
+BEDC	 04	XBEDC
+BEDD	 04	XBEDD
+BEDE	 04	XBEDE
+BEDF	 04	XBEDF
+BEE2	 04	XBEE2
+BEE3	 04	XBEE3
+BEE5	 04	XBEE5
+BEE7	 04	XBEE7
+BEE8	 04	XBEE8
+BEE9	 04	XBEE9
+BEEB	 04	XBEEB
+BEEC	 04	XBEEC
+BEF8	 04	XBEF8
+BFA8	 04	XBFA8
+BFA9	 04	XBFA9
+BFAC	 04	XBFAC
+BFAE	 04	XBFAE
+BFAF	 04	XBFAF
+BFB0	 04	XBFB0
+BFB1	 04	XBFB1
+BFB2	 04	XBFB2
+BFB3	 04	XBFB3
+BFB4	 04	XBFB4
+BFB6	 04	XBFB6
+BFB8	 04	XBFB8
+BFBA	 04	XBFBA
+BFBC	 04	XBFBC
+BFBD	 04	XBFBD
+BFBE	 04	XBFBE
+BFBF	 04	XBFBF
+C000	 04	Boot1
+C0AF	 04	dpbase
+C0AF	 04	dph_XLT
+C0B1	 04	dph_scratch
+C0B7	 04	dph_DirBuf
+C0B9	 04	dph_DPB
+C0BB	 04	dph_CSV
+C0BD	 04	dph_ALV
+C0BF	 04	dpb_SPT
+C0C1	 04	dpb_BSH
+C0C2	 04	dpb_BLM
+C0C3	 04	dpb_EXM
+C0C4	 04	dpb_DSM
+C0C6	 04	dpb_DRM
+C0C8	 04	dpb_AL0
+C0C9	 04	dpb_AL1
+C0CA	 04	dpb_CKS
+C0CC	 04	dpb_OFF
+C100	 04	LatBitmap
+C2E4	 04	Mnemonics1
+C35D	 04	Mnemonics2
+C3C9	 04	Registers2
+C3D2	 04	Registers3
+C3DE	 04	Registers1
+C3E7	 04	Octals
+C3F1	 04	Conditions
+C580	 04	RusBitmap
+C7F0	 04	OutVec
+C7F1	 04	XC7F1
+C7F3	 04	InVec
+C7F4	 04	XC7F4
+C7F7	 04	portNo
+C7F9	 04	XC7F9
+C7FA	 04	XC7FA
+C803	 04	b_smth
+C807	 04	b_Column
+C808	 04	b_Row
+C809	 04	b_NormInv
+C80A	 04	b_crsr
+C80D	 04	b_prompt
+C819	 04	b_c_img
+C821	 04	b_ESCm
+C822	 04	XC822
+C823	 04	XC823
+C825	 04	booted
+C82C	 04	s_width
+C840	 04	XC840
+C900	 04	inBuf
+C940	 04	XC940
+C941	 04	XC941
+C942	 04	XC942
+C943	 04	XC943
+C944	 04	XC944
+C9C0	 04	t_ScrImg
+D02D	 04	t_BIOS
+D050	 04	boot
+D06D	 04	wboot
+D0BF	 04	LD0BF
+D101	 04	LD101
+D134	 04	LD134
+D148	 04	LD148
+D186	 04	mvbc2hl_de
+D18E	 04	LD18E
+D195	 04	constat
+D19E	 04	conin
+D1A1	 04	conout
+D1B1	 04	LD1B1
+D1B5	 04	listst
+D1BE	 04	list
+D1BF	 04	LD1BF
+D1D4	 04	LD1D4
+D1DD	 04	reader
+D1DF	 04	punch
+D1E0	 04	home
+D1EA	 04	LD1EA
+D1F0	 04	seldsk
+D227	 04	LD227
+D230	 04	LD230
+D241	 04	LD241
+D244	 04	LD244
+D250	 04	settrk
+D25F	 04	LD25F
+D264	 04	setsec
+D270	 04	LD270
+D275	 04	sectran
+D27F	 04	LD27F
+D285	 04	setDMA
+D28B	 04	read
+D295	 04	LD295
+D2AD	 04	LD2AD
+D2B3	 04	LD2B3
+D2C2	 04	LD2C2
+D2CB	 04	write
+D2D5	 04	LD2D5
+D2ED	 04	LD2ED
+D2F3	 04	LD2F3
+D302	 04	LD302
+D30B	 04	LD30B
+D31F	 04	LD31F
+D328	 04	LD328
+D38F	 04	LD38F
+D3A3	 04	LD3A3
+D3C5	 04	LD3C5
+D3CA	 04	LD3CA
+D3D0	 04	t_d_err
+D3D8	 04	t_d_rd
+D3E1	 04	t_d_wr
+D3EA	 04	t_d_drv
+D3F2	 04	t_d_trk
+D3FB	 04	t_d_sec
+D404	 04	t_d_r_i
+D41B	 04	DPB0
+D42B	 04	DPB1
+D43B	 04	DPB2
+D44B	 04	DPB3
+D482	 04	LD482
+D4EA	 04	LD4EA
+D4FB	 04	LD4FB
+D501	 04	LD501
+D517	 04	LD517
+D51F	 04	LD51F
+D522	 04	LD522
+D547	 04	LD547
+D54C	 04	LD54C
+D5CC	 04	LD5CC
+D5D9	 04	LD5D9
+D5E6	 04	LD5E6
+D5E8	 04	LD5E8
+D604	 04	LD604
+D615	 04	LD615
+D619	 04	LD619
+D61D	 04	LD61D
+D629	 04	LD629
+D63B	 04	LD63B
+D649	 04	LD649
+D665	 04	LD665
+D667	 04	somewhere
+D68D	 04	LD68D
+D690	 04	LD690
+D69E	 04	LD69E
+D69F	 04	LD69F
+D6A6	 04	LD6A6
+D6AF	 04	LD6AF
+D6B9	 04	LD6B9
+D6BF	 04	LD6BF
+D6C1	 04	LD6C1
+D6D5	 04	LD6D5
+D6D9	 04	LD6D9
+D6DB	 04	LD6DB
+D714	 04	LD714
+D72B	 04	LD72B
+D732	 04	LD732
+D735	 04	LD735
+D739	 04	LD739
+D741	 04	LD741
+D74C	 04	LD74C
+D775	 04	LD775
+D794	 04	LD794
+D7AF	 04	LD7AF
+D7C6	 04	LD7C6
+D7E3	 04	LD7E3
+D7E4	 04	LD7E4
+D7EE	 04	LD7EE
+D7FF	 04	LD7FF
+D800	 04	LD800
+D80A	 04	LD80A
+D80F	 04	LD80F
+D814	 04	LD814
+D81E	 04	LD81E
+D823	 04	LD823
+D828	 04	LD828
+D82D	 04	LD82D
+D82F	 04	LD82F
+D835	 04	LD835
+D857	 04	LD857
+D888	 04	LD888
+D8B4	 04	LD8B4
+D8B6	 04	LD8B6
+D8B9	 04	LD8B9
+D8DD	 04	LD8DD
+D8E4	 04	LD8E4
+D8E8	 04	LD8E8
+D8F6	 04	LD8F6
+D8FF	 04	LD8FF
+D901	 04	LD901
+D905	 04	LD905
+D914	 04	LD914
+D95A	 04	LD95A
+D96C	 04	LD96C
+D98D	 04	LD98D
+D99E	 04	LD99E
+D9AB	 04	LD9AB
+D9BB	 04	LD9BB
+D9D0	 04	LD9D0
+D9DA	 04	LD9DA
+D9ED	 04	LD9ED
+D9F6	 04	LD9F6
+DA10	 04	LDA10
+DA19	 04	LDA19
+DA33	 04	LDA33
+DA37	 04	LDA37
+DA42	 04	LDA42
+DA5C	 04	t_d_chg
+DAA1	 04	LDAA1
+DAB4	 04	LDAB4
+DAC6	 04	LDAC6
+DACD	 04	LDACD
+DADD	 04	LDADD
+DAE0	 04	LDAE0
+DAE9	 04	LDAE9
+DAFF	 04	LDAFF
+DB08	 04	LDB08
+DB0E	 04	LDB0E
+DB14	 04	LDB14
+DB60	 04	LDB60
+DB78	 04	LDB78
+DB83	 04	LDB83
+DB8E	 04	LDB8E
+DB95	 04	LDB95
+DB9C	 04	LDB9C
+DBA1	 04	LDBA1
+DBA6	 04	LDBA6
+DBC7	 04	LDBC7
+DBCC	 04	LDBCC
+DBD4	 04	LDBD4
+DBDB	 04	LDBDB
+DBE0	 04	LDBE0
+DBEF	 04	LDBEF
+DBF2	 04	LDBF2
+DC02	 04	LDC02
+DC0D	 04	LDC0D
+DC34	 04	LDC34
+DC49	 04	LDC49
+DC55	 04	LDC55
+DCE9	 04	GetY_N
+DCF9	 04	LDCF9
+DCFB	 04	LDCFB
+DD0B	 04	LDD0B
+DD0F	 04	LDD0F
+DD25	 04	LDD25
+DD2A	 04	LDD2A
+DD2C	 04	LDD2C
+DD36	 04	LDD36
+DD48	 04	LDD48
+DD53	 04	LDD53
+DD65	 04	LDD65
+DD72	 04	LDD72
+DD83	 04	LDD83
+DD8F	 04	LDD8F
+DD98	 04	LDD98
+DDA8	 04	LDDA8
+DDBB	 04	LDDBB
+DDD0	 04	LDDD0
+DDE6	 04	t_d_rot
+DDF2	 04	t_d_bc
+DE03	 04	t_d_rod
+DE0E	 04	t_d_bbk
+DE1A	 04	t_d_nc
+DE34	 04	t_d_ner
+DE46	 04	t_d_con
+DE72	 04	t_d_mas
+DE91	 04	t_d_cpn
+DEAB	 04	bios_vec
+DEE8	 04	t_empty
+DEE8	 04	bv_end
+E800	 04	XE800
+E801	 04	XE801
+E802	 04	XE802
+E803	 04	LE803
+E806	 04	LE806
+E809	 04	LE809
+E80C	 04	LE80C
+E80F	 04	LE80F
+E812	 04	LE812
+E818	 04	LE818
+E81B	 04	LE81B
+E81E	 04	LE81E
+E997	 04	t_basic
+EE59	 04	t_pplay
+EE6C	 04	t_pkey
+EE84	 04	t_srch
+EE8E	 04	t_fndc
+EE95	 04	t_ldng
+EE9D	 04	t_ldng
+EEA7	 04	t_lderr
+EEB2	 04	t_vferr
+EEBF	 04	t_tok
+EEC2	 04	t_prec
+EEDE	 04	t_svng
+EEE5	 04	t_t_eof
+EFEB	 04	t_date
+F000	 04	doDump
+F082	 04	doList
+F13E	 04	prLine
+F174	 04	tapeWrite
+F194	 04	tapeRead
+F19A	 04	tapeVfy
+F1B5	 04	findNonSpc
+F1BD	 04	txtWidth
+F1C5	 04	SetScr48
+F1CA	 04	SetScr64
+F1E5	 04	doInText
+F1F7	 04	doGo
+F1FB	 04	doIn
+F224	 04	doOut
+F2CA	 04	prAdr
+F2D3	 04	prByte
+F2E0	 04	prNib
+F2F2	 04	doMove
+F2F8	 04	doVerify
+F358	 04	t_tere
+F3DB	 04	LF3DB
+F759	 04	GetLn
+F763	 04	GetLn1
+F7B4	 04	SetNor
+F7B9	 04	SetInv
+F81C	 04	COut@
+F971	 04	prCRLF
+F976	 04	prSpace
+F9A0	 04	HomCl
+F9DA	 04	Home
+F9EA	 04	Fill
+F9F3	 04	Move
+FA02	 04	mult64
+FA09	 04	rowAddr
+FA22	 04	doBeep
+FA38	 04	wait
+FA45	 04	RdKey@
+FB03	 04	Scroll1
+FB3B	 04	fl_last
+FB70	 04	LFB70
+FC50	 04	CmpBCHL
+FD24	 04	Out64Col
+FD4D	 04	d0Is1
+FD54	 04	Col_00
+FFFF	 04	XFFFF
+
+Number of symbols:			424
+
+;--------------------------------------------------------------

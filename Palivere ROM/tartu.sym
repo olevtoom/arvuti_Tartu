@@ -1,0 +1,162 @@
+;
+;	t a r t u . s y m
+;	~~~~~~~~~~~~~~~~~
+;
+;	Iskra 1080 Tartu ROM symbol file
+;
+;       Last edited: 20200124
+;
+
+message		Using Iskra 8080 Tartu definitions
+
+
+;=============================================================================
+;
+;	Iskra 8080 Tartu definitions
+;
+
+cpu		8080
+
+;	General RAM definitions
+
+;=============================================================================
+;
+;	General ROM definitions
+;
+
+org		0xC000
+
+code		0xC000	ColdStart1
+code		0xC006	KST
+
+byte		0xC100	LatBitmap		0x0300
+byte		0xC400	GrBitmap		0x0180
+byte		0xC580	RusBitmap		0x0280
+byte		0xFA27	rowAddr			0x19	; rea asukohad ??? kuskil
+
+string		0xC9C0	t_ScrImg	0x0640	; screen image in ASCII; 25*64 = 1600 bytes (0x640), up to CFFF
+string		0xCA00	t_inline	0x0040
+string		0XCA40	t_press1	0x0040
+string		0XCA80	t_press2	0x0040
+string		0XCAC0	t_saving	0x0040
+
+; weird area of spaces
+string		0XCB00	t_sp01		0x0040
+string		0XCB40	t_sp02		0x0040
+string		0XCB80	t_sp03		0x0040
+string		0XCBC0	t_sp04		0x0040
+
+string		0XCC00	t_sp05		0x0040
+string		0XCC40	t_sp06		0x0040
+string		0XCC80	t_sp07		0x0040
+string		0XCCC0	t_sp08		0x0040
+
+string		0XCD00	t_sp09		0x0040
+string		0XCD40	t_sp10		0x0040
+string		0XCD80	t_sp11		0x0040
+string		0XCDC0	t_sp12		0x0040
+
+string		0XCE00	t_sp13		0x0040
+string		0XCE40	t_sp14		0x0040
+string		0XCE80	t_sp15		0x0040
+string		0XCEC0	t_sp16		0x0040
+
+string		0XCF00	t_sp17		0x0040
+string		0XCF40	t_sp18		0x0040
+string		0XCF80	t_sp19		0x0040
+string		0XCFC0	t_sp20		0x0040
+
+; põhi-C000-CFFF
+; copy /b 01_DD32_C0.bin+02_DD33_C8.bin+03_DD34_D0.bin+04_DD35_D8.bin+05_DD36_E0.bin+06_DD37_E8.bin+07_DD38_F0.bin+08_DD39_F8.bin ROM0.bin
+; teine C000-CFFF
+; copy /b 09_DD40_XC0.bin+10_DD41_XC8.bin+03_DD34_D0.bin+04_DD35_D8.bin+05_DD36_E0.bin+06_DD37_E8.bin+07_DD38_F0.bin+08_DD39_F8.bin ROM1.bin
+
+; C800-piirkonna muutujad
+0xC800	word	; külmkäivitusel saab 0xC000
+0xC802	byte	; ekraani laius (0x30 või 0x40 veergu), algväärtus 0x40 e. 64
+0xC803	byte	; külmkäivitusel 0, 
+; peegel on 0x004E
+0xC804	word	; külmkäivitusel ?
+0xC806	byte	; kasutusel väljastatava sümboli jrk. nr. salvestamiseks (' '->00, '!'->01 jne)
+0xC807	byte	; veeru number ekraanil (0...0x2F või 0x3F)
+; peegel on 0x004D
+0xC808	byte	; rea number ekraanil (0...0x18)
+0xC809	byte	; külmkäivitusel 0, teksti mask (00=Normal, FF=Inverse)
+; peegel on 0x004C
+0xC80A	word	; kursori asukoht ekraani tekstikoopias (sinna kirjutab näiteks HomCl väärtuse 0xC9C0)
+0xC80C	byte	; ainult 1 koht: F335 xra a / sta 0xc80c ???
+0xC80D	byte	; prompt: külmkäivitusel 7F
+0xC80E	byte	; külmkäivitusel 
+0xC80F	byte	; külmkäivitusel 
+
+0xC816	byte	; ; külmkäivitusel 0xFF
+0xC817	word	; ; külmkäivitusel 0x1FF
+0xC819	word	; sümbolipiltide tabeli algusaadress (sinna kirjutatakse külmkäivitusel 0xC100)
+0xC820	byte	; 0: tavaline tekstiväljastus, FF: ESC-jada; külmkäivitusel 0
+0xC821	byte	; ESC-jada indeks?; külmkäivitusel 0
+0xC822	byte	; ; külmkäivitusel 0
+0xC824	byte	; ; külmkäivitusel 0x30
+
+0xC831	byte	; vt. märgendi TRead kandist
+
+0xC83F	word	; makilt lugemisel kirjutatakse sinna mingi aadress (0xEC28, 0xEC53, 0xECBC või 0xECF2
+		; vastavalt sellele, kas baidis 0xC831 on 0xD3, 0xEA, 0xD0 või miski muu
+		; viimasel juhul kirjutatakse baiti 0xC831 väärtus 0xD3), sinna läheb pärast teadet Reading...
+0xC841	byte	;
+0xC842	byte	;
+0xC843	byte	;
+0xC844	byte	; ; külmkäivitusel 0x9B
+0xC845	byte	; ; külmkäivitusel 0x9C
+0xC846	byte	; ; külmkäivitusel 0x9D
+0xC847	byte	; ; külmkäivitusel 0x97
+0xC848	byte	; ; külmkäivitusel 0x98
+0xC849	byte	; ; külmkäivitusel 0x99
+
+
+; zx-pk.ru foorumist saadud jutt portide kohta
+; 80h - 87h			RS232
+; 90h - 93h, duublid 94h - 97h	värvipalett
+; 98h - 99h, duublid 9Ah - 9Fh	paralleelport ja magnetofon
+; A8h - AFh			ROMi valik
+; B0h, duublid B1h - BFh	salvestamine magnetofonile, valjuhääldi
+; B8h - BFh			konfiguratsiooniregistri biti nullimine
+; C0h				klaviatuur
+; C1h - C7h			kettaseadme kontroller
+; F8h - FFh			konfiguratsiooniregistri biti ühteseadmine
+
+; 20200219: kas on nii, et
+Out 0xFA	; lülitab sisse 1. ROM-i (Assembleri ja Basicu tekstid jm., BIOS-i laadimine opmällu)
+Out 0xBA	; lülitab sisse 0. ROM-i (sümboligeneraator jm.)
+Aga mida siis teeb Out 0xA8 (sinna läheb kas 0x80 või 0x00)???
+
+;
+;
+; Firefoxi lehed 20200219
+; https://zx-pk.ru/threads/12913-kompyuter-quot-iskra-1080-tartu-quot/page2.html?highlight=%d1%80%d0%b5%d0%b3%d0%b8%d1%81%d1%82%d1%80%d0%b0+%d0%ba%d0%be%d0%bd%d1%84%d0%b8%d0%b3%d1%83%d1%80%d0%b0%d1%86%d0%b8%d0%b8
+; https://schetmash.com/contact
+; http://ruecm.forum2x2.ru/t1076-topic
+; http://alemorf.ru/comps/iskra_1080/index.html
+
+; http://www.classiccmp.org/dunfield/r/8080.txt
+; http://stjarnhimlen.se/apple2/CPM.ref.txt
+
+20200303 Firefoxi II lk. RC2014 asjus
+http://searle.x10host.com/cpm/index.html
+https://rc2014.co.uk/modules/pageable-rom/
+http://rc2014.co.uk/1458/simple-guide-to-getting-cpm-running-on-rc2014/
+https://github.com/fbergama/pigfx
+https://groups.google.com/forum/#!searchin/rc2014-z80/pigfx$20800%7Csort:date/rc2014-z80/hvsUuOzWZA0/YNv4lIFsFgAJ
+
+
+ ??? ??     | ??????     |????? ??????     |??????| ?????????????? ??????????
+??556??7    |N82S191     |SIC |239.24-2    |DIP24 |??? 2Kx8; ??; 80??; 1??
+https://www.google.com/search?client=firefox-b-d&sxsrf=ALeKk02jg4COpg8dr2LHEo3rcmZpj4yNQw%3A1582356349679&ei=fddQXoXuKPKHwPAPl4aDsAc&q=eeprom+parallel+-serial&oq=eeprom+parallel+-serial&gs_l=psy-ab.3...16225.17458..19483...1.0..0.110.588.6j1......0....1..gws-wiz.qxL35_B6b44&ved=0ahUKEwjFoIXh0OTnAhXyAxAIHRfDAHYQ4dUDCAo&uact=5
+https://www.elfadistrelec.ee/et/eeprom-parallel-64kb-150ns-pdip-28-microchip-at28c64b-15pu/p/30099616?q=eeprom&pos=3&origPos=9&origPageSize=10&track=true
+
+programmeeritavad
+K580IK57	DMA kontroller
+K580VV55	paralleelinterfeiss
+K580VV51	järjestikinterfeiss
+
+The quick brown... eesti keeles:
+Põdur Zagrebi tðellomängija-följetonist Ciqo külmetas kehvas garaaþis.

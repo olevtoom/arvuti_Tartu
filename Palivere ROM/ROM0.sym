@@ -1,0 +1,225 @@
+;
+;	R O M 0 . s y m
+;	~~~~~~~~~~~~~~~
+;
+;	Iskra 1080 Tartu ROM symbol file
+;	First bank of ROM C000-CFFF
+;
+;       Last edited: 20200214
+;
+
+message		Using Iskra 8080 Tartu definitions
+
+
+;=============================================================================
+;
+;	Iskra 8080 Tartu definitions
+;
+
+cpu		8080
+
+;	General RAM definitions
+
+;=============================================================================
+;
+;	General ROM definitions
+;
+
+org		0xC000
+
+code		0xC000	Boot1
+code		0xC006	KST1
+code		0xC00D	KST2
+code		0xC018	KST3
+
+code		0xC020	Cmp_DE_HL
+
+code		0xC0BE	Ldax_B
+code		0xC0C0	Ldax_D
+code		0xC0C2	Ldax_H	; mov a,m
+
+code		0xC0C4	Scroll
+
+
+code		0xF3E7	Boot2
+code		0xF454	ColdStart
+code		0xD000	Basic
+
+code		0xF0AC	MonCmdParser
+
+; Monitor entry points
+; sümboli sisestamise ja väljastamise muudetavad aadressid
+code		0xC7F0	OutVec	;A: väljastatav sümbol
+code		0xC7F3	InVec	;tagasi: A=loetud sümbol
+; nende vaikimisi väärtused, lugemine klaviatuurilt, väljastamine ekraanile
+code		0xF7FB	COut@	;A: väljastatav sümbol
+code		0xF5FC	RdKey@	;tagasi: A=loetud sümbol
+
+; klaviatuuri ja ekraani asjad
+code		0xFB94	KBStat	;tagasi A=FF, kui klahvi polnud vajutatud, muidu klahvi kood
+code		0xFA59	GetChar	;näitab kursorit ja loeb sümboli klaviatuurilt
+code		0xF2D3	prNib	;A: trükitav 1-kohaline arv
+code		0xF2C6	prByte	;A: trükitav 2-kohaline arv
+code		0xF2BD	prAdr	;HL: trükitav 4-kohaline arv
+code		0xF137	prLine	;HL: rea algus, C: lõputunnus
+code		0xF73C	GetLnZ	;trükib reavahetuse ja kukub GetLn-i
+code		0xF73F	GetLn	;trükib prompti (0xC80D) ja sisestab rea aadressile 0xC901
+code		0xF745	GetLn1	;sisestab rea aadressile 0xC901
+; ekraanioperatsioonid
+code		0xF793	SetNor	; valged tähed mustal taustal
+code		0xF798	SetInv	; mustad tähed valgel taustal
+code		0xF7BE	HTab	;A: veeru # (0...0x3F)
+code		0xF7DC	VTab	;A: rea # (0...0x18)
+code		0xF9A0	HomCl	; puhastab ekraani ja paneb kursori üles vasakule
+code		0xF9F8	Home	; paneb kursori üles vasakule
+
+code		0xF942	NextLine	; läheb järgmisele reale ? kas algusse?, skrollib vajadusel
+code		0xF7A0	SetScr48	; ekraan 48-veeruliseks
+code		0xF7A0	SetScr48	; ekraan 48-veeruliseks
+code		0xF7A6	SetScr64	; ekraan 64-veeruliseks
+
+code		0xFB19	ScrlTxt		; liigutab ekraani tekstitõmmist 1 rea võrra üles
+code		0xF96C	prCRLF		; väljastab ekraanile reavahetuse
+code		0xF971	prSpace		; kirjutab ekraanile tühiku
+code		0xF1B0	txtWidth	; vahetab 40- ja 64-veerulist ekraani
+code		0xF1A8	findNonSpc	; otsib HL järgi esimest mittetühikut
+code		0xF1EE	doIn		; täidab monitori käsu I (loeb pordist)
+;code		0xF1EE	doIn		; täidab monitori käsu I (loeb pordist)
+code		0xF25E	makeInOut	; kirjutab aadressile 0xC7F6 käsu (akumulaatorist) In xx või Out xx ja selle järele RET.
+					; Pordi nr. peab kuidagi teisiti saama baiti 0xC7F7
+byte		0xC7F7	portNo		; ... sinna see kirjutatakse
+code		0xF16D	tapeWrite	; kirjutab makile mäluosa ...
+code		0xF197	tapeRead	; loeb makilt faili aadressile ...
+
+code		0xF080	doList		; väljastab mäluosa 8080 käskudena
+code		0xF000	doDump		; väljastab mäluosa 16-ndarvude ja ASCII sümbolitena
+code		0xF1EA	doGo		; alustab programmi täitmist aadressilt, mis on sõnas 0xC812
+code		0xF2E5	doMove		; täidab monitori Move-käsu
+code		0xF2EB	doVerify	; täidab monitori Verify-käsu
+code		0xF1D8	doInText	; sisestab monitoris tekstijada
+code		0xFA20	mult64		; korrutab HL 64-ga
+
+code		0xFA40	doBeep		; piuksub
+
+code		0xFC05	wait		; ootab 56+(HL)*28 tsüklit
+
+code		0xF8B0	OutVisible	; tuleb Cout@-st, sümbol tuleb joonistada ekraanile
+code		0xF903	Out48Col	; sümbol joonistatakse 48-veerulisele ekraanile
+code		0xCD51	Out64Col	; sümbol joonistatakse 64-veerulisele ekraanile
+; viimase alammärgendid
+code		0xCD7C	d0Is1		; veeru number on paaritu
+code		0xCD83	Col_00		; veeru number on 0,4,8,...
+code		0xCD9A	Col_00_out	; 00-veeru joonistamine: 6 bitti kõrgemateks, kokku mälust võetud 2 madalama bitiga
+code		0xCDB1	Col_01		; veeru number on 1,5,9,...
+code		0xCDC8	Col_01_out	; 01-veeru joonistamine: 2 kõrgemat bitti madalateks, kokku mälust võetud 6 kõrgema bitiga
+					; järgmisse baiti 4 madalamat bitti kõrgemateks, kokku mälust võetud 4 madalama bitiga 
+code		0xCDEF	Col_10		; veeru number on 2,6,A,...
+code		0xCE07	Col_10_out	; 10-veeru joonistamine: 4 kõrgemat bitti madalateks, kokku mälust võetud 4 kõrgema bitiga
+					; järgmisse baiti 2 madalamat bitti kõrgemateks, kokku mälust võetud 6 madalama bitiga 
+code		0xCE2C	Col_11		; veeru number on 3,7,B,...
+code		0xCE45	Col_11_out	; 11-veeru joonistamine: 6 bitti kokku mälust võetud 2 kõrgema bitiga
+
+code		0xF9E4	ClrScr_2	; teise (värvilise jaoks vajaliku) ekraanipiirkonna puhastamine
+code		0xF9C2	QuickFill	; täidab (ekraanipiirkonna) magasini abil kehtiva Normal/Inverse värviga
+
+; mälu sisu liigutamised
+code		0xFA11	Move	;BC: lähtekoha algus, HL: sihtkoha algus, DE: lähtekoha lõpp + 1
+code		0xCFF0	MovROM	;BC: lähtekoha algus, HL: sihtkoha algus, DE: lähtekoha lõpp + 1.
+;				 Saab kasutada C0-C8 ROMide opmällu kopeerimiseks.
+code		0xFA08	Fill	;B: sisu, HL: algus, DE: pikkus
+; kassetikas
+code		0xED4F	TSave		;0xC837: algus, 0xC839: lõpp, 0xC829: nimi (6 char)
+code		0xEB7B	TRead		;0xC837: algus, 0xC839: lõpp, 0xC829: nimi (6 char)
+; kassetinduse alamprogrammid
+code		0xEE78	TLdError	;0xC446 = "Load error"
+code		0xEE7E	TVfError	;0xC452 = "Verify error"
+code		0xEC1E	TReading	;0xC43D = "Reading"
+
+;erinevad lugemisprogrammid, valitakse baidi 0xC831 sisu järgi
+code		0xEC28	TR_1		; kui 0xC831 = 0xD3
+code		0xEC53	TR_2		; kui 0xC831 = 0xEA
+code		0xECBC	TR_3		; kui 0xC831 = 0xD0
+code		0xECF2	TR_4		; kui 0xC831 = mingi muu, sel juhul saab väärtuse 0xD3
+
+; C000-CFFF püsimälu ümberlülitamised
+;code		0xFB87	SelectROM0	; valib Basicuga püsimälu (Out 0A8h,00h)
+;code		0xFB8E	SelectROM1	; valib "selle teise" (Out 0A8h,80h)
+
+; igasugu avastatud asjad
+code		0xCB94	NegateHL	; HL := -HL
+code		0xCBA8	CmpDEHL		; paneb Z-lipu
+
+code		0xEE84	printROM1	; väljastab ROM1-s oleva stringi (aadress HL-is, lõpetab '$')
+
+; BIOSi funktsioonid (ROM II tõstab need aadressilt 0xC9CC opmällu aadressile 0xB200)
+; järgnevad kettakirjeldused (?) kah, aadressini 0xCA1E
+code		0xFD7F	boot	;0xC9CC	-> 0xB200
+code		0xFD90	wboot	;0xC9CF	-> 0xB203
+code		0xFDA3	constat	;0xC9D2	-> 0xB206
+code		0xFDAC	conin	;0xC9D5	-> 0xB209
+code		0xFDAF	conout	;0xC9D8	-> 0xB20C
+code		0xFDC5	list	;0xC9DB	-> 0xB20F
+code		0xFDCE	punch	;0xC9DE	-> 0xB212
+code		0xFDCF	reader	;0xC9E1	-> 0xB215
+code		0xFDF4	home	;0xC9E4	-> 0xB218
+code		0xFDD8	seldsk	;0xC9E7	-> 0xB21B
+code		0xFDFA	settrk	;0xC9EA	-> 0xB21E
+code		0xB21E	settrk	;
+code		0xFE03	setsec	;0xC9ED	-> 0xB221
+code		0xFE0B	setDMA	;0xC9F0	-> 0xB224
+code		0xFE11	read	;0xC9F3	-> 0xB227
+code		0xFE23	write	;0xC9F6	-> 0xB22A
+code		0xFDCD	listst	;0xC9F9	-> 0xB22D
+code		0xFE08	sectran	;0xC9FC	-> 0xB230
+; BIOSi mälupiirkond pärast funktsioone algab 0xB233
+byte		0x0004	CPMcurDsk	;
+byte		0xB357	sekdsk		; BIOSi jaoks
+word		0xB358	sektrk		;
+byte		0xB35A	seksec		;
+word		0xB35B	dmaadr		;
+byte		0xB233	dpbase	0x10	;
+; byte		0xC9FF	dpbase	0x10	; 
+
+;ketta lugemise-kirjutamise jupid
+code		0xC984	readR1		;kettalt lugemise programm ROM1-s
+code		0xC9BB	readR1_2	;... selle jätk
+code		0xC998	writeR1		;kettale kirjutamise programm ROM1-s
+code		0xC9C0	writeR1_2	;... selle jätk
+
+word		0xCE67	zeroes		; reavahede joonistamiseks
+
+word		0xC03B	Empty1		0x0041
+
+word		0xC100	LatBitmap	0x0180
+word		0xC400	GrBitmap	0x00C0
+word		0xC580	RusBitmap	0x0140
+
+byte		0xFA27	rowAddr			0x19	; rea asukohad ??? kuskil
+
+byte		0x4C	RAM_NormInv	; baidi 0xC809 koopia (0=Normal, FF = Inverse)
+byte		0x4D	RAM_Column	; baidi 0xC807 koopia (veeru # ekraanil)
+byte		0x4E	RAM_smth	; baidi 0xC803 koopia, külmkäivitusel 0
+
+; järgmised on opmälu  jaoks
+; word		0xC825	booted		; "1234" if already switched on
+;
+; string		0xC900	inBuf		0x0040	; ? ehk rohkem?
+;
+; string		0xC9C0	t_ScrImg	0x0640	; screen image in ASCII; 25*64 = 1600 bytes (0x640), up to CFFF
+
+string		0XD0D7	t_in		0x0005
+string		0XD0DC	t_Ok		0x0005
+string		0XD0E1	t_Break		0x0008
+
+string		0XD937	t_reenter	0x000C
+string		0XD9F0	t_x_ignor	0x0011
+string		0XE7BA	t_TBasic	0x0012
+
+
+string		0XF34A	t_Iskra2	0x0016
+
+
+
+; http://kboohk.com/cart/index.php?route=product/category&path=59
+; https://www.wordfast.net/wiki/Creating_Wordfast_Translation_Memory_in_WFC
+

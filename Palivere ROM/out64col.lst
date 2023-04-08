@@ -1,0 +1,275 @@
+;------------------------------------------------------------------------------
+;
+; Iskra 1080 Tartu ROM0 subroutine that draws a character onto 64-column screen
+; taken from the output of dasmx130 disassembler 20200220
+;
+;	The structure of monochrome graphic screen:
+;	every byte defines 8 pixels (1 is bright, 0 is dark)
+;	d7 defines leftmost, d0 rightmost pixel
+;
+;	+---------------------------------------------------+
+;	|FFFF|FEFF|              . . .            |D1FF|D0FF|
+;	|FFFE|FEFE|              . . .            |D1FE|D0FE|
+;	|                        . . .                      |
+;	|                        . . .                      |
+;	|FF01|FE01|              . . .            |D101|D001|
+;	|FF00|FE00|              . . .            |D100|D000|
+;	+---------------------------------------------------+
+;
+;	Location of character images in 64-column screen bytes
+;	+_______________+_______________+_______________+
+;	|       I       |       II      |       III     |
+;	|               |               |               |
+;	+ | | | | | | | + | | | | | | | + | | | | | | | +
+;	|7 6 5 4 3 2|1 0 7 6 5 4|3 2 1 0 7 6|5 4 3 2 1 0|
+;	|           |           |           |           |
+;	|5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|
+;	+ | | | | | + | | | | | + | | | | | + | | | | | +
+;	|    C00    |    C01    |    C10    |    C11    | 
+;	+___________+___________+___________+___________+
+;	
+;	In character generator every character takes 8 bytes (8*8 pixels), but for 64 columns, 
+;	the width of character must be 384/64 = 6 pixels.
+;	We use lower bits (d5,...,d0).
+;
+;	Depending of the number of column, the character could be drawn on the screen in four ways.
+;	We "take into consideration" 3 consecutive bytes on screen.
+;	Their addresses differ by 100h (decreasing to the right). This makes it easy handling addresses in programs.
+;	For example, if register pair HL holds address of a byte on screen, then with instructions
+;		dcr	h
+;	and
+;		inr	h
+;	you can select the byte correspondingly to the left and to the right of it, with instructions
+;		dcr	l
+;	and
+;		inr	l
+;	the byte correspondingly below and above to it
+;	(checking, of course, that new address will remain in [D000h, FFFFh].
+;
+;	Description of the algorithm
+;	----------------------------
+;	1. If column number mod 4 = 0, then
+;	take all 6 bits from the character and shift them to d7,...d2,
+;	read byte I from screen and OR its 2 lowest bits (d1,d0) with the character bits
+;	then save the result on screen (replacing byte I).
+;
+;	2. If column number mod 4 = 1, then
+;	take 2 highest bits (d5,d4) from the character and shift them to d1,d0,
+;	4 lowest bits (d3,...d0) shift to d7,...,d4,
+;	read byte I from screen, take 6 highest bits of it and OR the result with 2 highest bits of character,
+;	save the result on screen (replacing byte I),
+;	read byte II from screen, take 4 lowest bits of it and OR them 4 with lowest bits of character,
+;	save the result on screen (replacing byte II).
+;
+;	2. If column number mod 4 = 2, then
+;	take 4 highest bits (d5,...,d2) from the character and shift them to d3,...,d0,
+;	2 lowest bits shift to d7,d6,
+;	read byte II from screen, take 4 highest bits of it and OR them with 4 highest bits of character,
+;	save the result on screen (replacing byte II),
+;	read byte III from screen, take 6 lowest bits of it and OR them with 2 lowest bits of character,
+;	save the result on screen (replacing byte III).
+;
+;	2. If column number mod 4 = 3, then
+;	take all significant 6 bits from the character,
+;	read byte III from screen, take 2 highest bits of it and OR them with 6 bits of character,
+;	save the result on screen (replacing byte III).
+;
+; On entry:	HL = address of character image
+;		C = number of lines in image (8 or 10, but I haven't seen anything except 8)
+;		E = start address of text row on graphic screen (got from constant array RowAddr)
+;
+CD51				Out64Col:
+CD51 : AF 		" "		xra	a
+CD52 : 32 4F 00 	"2O "		sta	X004F
+CD55 : 3A 4F 00 	":O "		lda	X004F
+CD58 : 32 4F 00 	"2O "		sta	X004F
+CD5B : 3E 80 		"> "		mvi	a,080H
+CD5D : D3 A8 		"  "		out	0A8H
+CD5F : 7B 		"{"		mov	a,e
+CD60 : EB 		" "		xchg			; DE := start of char image
+CD61 : 6F 		"o"		mov	l,a		; L := start of row in graphics screen
+CD62 : 3A 4D 00 	":M "		lda	RAM_Column	; column # of cursor (here the char is to be drawn)
+CD65 : 0F 		" "		rrc
+CD66 : 0F 		" "		rrc			; divide by 4
+CD67 : E6 1F 		"  "		ani	01FH		; mask out unnecessary bits
+CD69 : 67 		"g"		mov	h,a		; H := column # div 4
+CD6A : 84 		" "		add	h
+CD6B : 84 		" "		add	h		; multiply by 3
+CD6C : 2F 		"/"		cma			; ? why complement? Think about it a bit...
+CD6D : 67 		"g"		mov	h,a		; 3 * (column div 4) -> H-reg
+CD6E : 3A 4D 00 	":M "		lda	RAM_Column	; column #
+CD71 : 0F 		" "		rrc
+CD72 : DA 7C CD 	" | "		jc	d0Is1		; CY means it was odd (d0 = 1)
+CD75 : 0F 		" "		rrc
+CD76 : DA EF CD 	"   "		jc	Col_10		; now CY means d1 = 1
+CD79 : C3 83 CD 	"   "		jmp	Col_00		; column mod 4 = 0 (0,4,8,..)
+				;
+CD7C				d0Is1:
+CD7C : 0F 		" "		rrc			; d0=1, let's see what is d1
+CD7D : DA 2C CE 	" , "		jc	Col_11		; column mod 4 = 3 (3,7,B,..)
+CD80 : C3 B1 CD 	"   "		jmp	Col_01		; column mod 4 = 1 (1,5,9,..)
+				;
+CD83				Col_00:
+CD83 : 0E 08 		"  "		mvi	c,008H		; height of char image
+CD85 : CD 9A CD 	"   "		call	Col_00_out
+CD88 : 3A 4E 00 	":N "		lda	RAM_smth	; (I think this is) current height of char image
+CD8B : B7 		" "		ora	a		; (0=8 lines, non-0=10 lines)
+CD8C : C2 92 CD 	"   "		jnz	LCD92
+CD8F : 11 67 CE 	" g "		lxi	d,zeroes	; 2 empty lines under character
+CD92				LCD92:
+CD92 : 0E 02 		"  "		mvi	c,002H
+CD94 : CD 9A CD 	"   "		call	Col_00_out
+CD97 : C3 5A CE 	" Z "		jmp	LCE5A
+				;
+CD9A				Col_00_out:			; DE = char image addr, C = # of lines
+CD9A : 1A 		" "		ldax	d		; get line from char image
+CD9B : 17 		" "		ral			; 2 bits to left
+CD9C : 17 		" "		ral			; i.e. to d7...d2
+CD9D : 47 		"G"		mov	b,a		
+CD9E : 3A 4C 00 	":L "		lda	RAM_NormInv
+CDA1 : A8 		" "		xra	b		; right polarity (Normal/Inverse)
+CDA2 : E6 FC 		"  "		ani	0FCH		; strip unnecessary bits
+CDA4 : 47 		"G"		mov	b,a		; B = bits d5...d0 of character image moved to d7...d2
+CDA5 : 7E 		"~"		mov	a,m		; read byte from screen
+CDA6 : E6 03 		"  "		ani	003H		; from this, d1 ja d0 remain
+CDA8 : B0 		" "		ora	b		; merge new and old...
+CDA9 : 77 		"w"		mov	m,a		; ... and back to screen
+CDAA : 13 		" "		inx	d		; next line from char image
+CDAB : 2B 		"+"		dcx	h		; next byte (line) from screen
+CDAC : 0D 		" "		dcr	c		; --counter
+CDAD : C2 9A CD 	"   "		jnz	Col_00_out	; more lines to display
+CDB0 : C9 		" "		ret
+				;
+CDB1				Col_01:
+CDB1 : 3E 08 		"> "		mvi	a,008H		; char image height
+CDB3 : CD C8 CD 	"   "		call	Col_01_out
+CDB6 : 3A 4E 00 	":N "		lda	RAM_smth	; (I think this is) current height of char image
+CDB9 : B7 		" "		ora	a		; (0=8 lines, non-0=10 lines)
+CDBA : C2 C0 CD 	"   "		jnz	LCDC0
+CDBD : 11 67 CE 	" g "		lxi	d,zeroes	; 2 empty lines under character
+CDC0				LCDC0:
+CDC0 : 3E 02 		"> "		mvi	a,002H
+CDC2 : CD C8 CD 	"   "		call	Col_01_out
+CDC5 : C3 5A CE 	" Z "		jmp	LCE5A
+				;
+CDC8				Col_01_out:			; DE = char image addr, C = # of lines
+CDC8 : F5 		" "		push	psw
+CDC9 : 3A 4C 00 	":L "		lda	RAM_NormInv
+CDCC : 4F 		"O"		mov	c,a
+CDCD : 1A 		" "		ldax	d		; get line from char image
+CDCE : 0F 		" "		rrc			; 4 bits to right (i.e. 2 highest bits remain...
+CDCF : 0F 		" "		rrc			; ...on bits d1 ja d0...
+CDD0 : 0F 		" "		rrc			; ...and 4 lowest bits go to d7,...,d4)
+CDD1 : 0F 		" "		rrc
+CDD2 : A9 		" "		xra	c
+CDD3 : 4F 		"O"		mov	c,a		; Normal/Inverse
+CDD4 : E6 03 		"  "		ani	003H		; strip bits unnecessary for byte I
+CDD6 : 47 		"G"		mov	b,a		; B = bits d5,d4 of char image shifted to d1,d0
+CDD7 : 79 		"y"		mov	a,c		
+CDD8 : E6 F0 		"  "		ani	0F0H		; strip bits unnecessary for byte II
+CDDA : 4F 		"O"		mov	c,a		; C = bits d3,...,d0 of char image shifted to d7,...,d4
+CDDB : 7E 		"~"		mov	a,m		; read byte I from screen
+CDDC : E6 FC 		"  "		ani	0FCH		; d7,...,d2 remain from it
+CDDE : B0 		" "		ora	b		; merge with 2 highest bits of char image line...
+CDDF : 77 		"w"		mov	m,a		; ... and write byte I back to screen
+CDE0 : 25 		"%"		dcr	h		; read byte II from screen
+CDE1 : 7E 		"~"		mov	a,m		
+CDE2 : E6 0F 		"  "		ani	00FH		; from this remain d3,...,d0
+CDE4 : B1 		" "		ora	c		; merge with 4 lowest bits of char image line...
+CDE5 : 77 		"w"		mov	m,a		; ... and write byte II back to screen
+CDE6 : 24 		"$"		inr	h		; get back to byte I
+CDE7 : 13 		" "		inx	d		; next line from char image
+CDE8 : 2B 		"+"		dcx	h		; next line from screen		
+CDE9 : F1 		" "		pop	psw
+CDEA : 3D 		"="		dcr	a		; --counter
+CDEB : C2 C8 CD 	"   "		jnz	Col_01_out	; more lines to display
+CDEE : C9 		" "		ret
+				;
+CDEF				Col_10:
+CDEF : 25 		"%"		dcr	h		; here we take byte II from screen at once
+CDF0 : 3E 08 		"> "		mvi	a,008H		; char image height
+CDF2 : CD 07 CE 	"   "		call	Col_10_out
+CDF5 : 3A 4E 00 	":N "		lda	RAM_smth	; (I think this is) current height of char image
+CDF8 : B7 		" "		ora	a		; (0=8 lines, non-0=10 lines)
+CDF9 : C2 FF CD 	"   "		jnz	LCDFF
+CDFC : 11 67 CE 	" g "		lxi	d,zeroes	; 2 empty lines under character
+CDFF				LCDFF:
+CDFF : 3E 02 		"> "		mvi	a,002H
+CE01 : CD 07 CE 	"   "		call	Col_10_out
+CE04 : C3 5A CE 	" Z "		jmp	LCE5A
+				;
+CE07				Col_10_out:			; DE = char image addr, C = # of lines
+CE07 : F5 		" "		push	psw
+CE08 : 3A 4C 00 	":L "		lda	RAM_NormInv
+CE0B : 4F 		"O"		mov	c,a
+CE0C : 1A 		" "		ldax	d		; get line from char image
+CE0D : 0F 		" "		rrc			; 2 times to right (i.e. 4 highest bits move...
+CE0E : 0F 		" "		rrc			; ...to d3,...,d0 and 2 lowest bits go to d7,d6
+CE0F : A9 		" "		xra	c		; set Norm/Inv and put result to C-reg
+CE10 : 4F 		"O"		mov	c,a
+CE11 : E6 0F 		"  "		ani	00FH		; strip unnecessary bits
+CE13 : 47 		"G"		mov	b,a		; B = bits d5,...,d2 of char line shifted to d3,...,d0
+CE14 : 79 		"y"		mov	a,c
+CE15 : E6 C0 		"  "		ani	0C0H
+CE17 : 4F 		"O"		mov	c,a		; C = bits d1,d0 of char line shifted to d7,d6
+CE18 : 7E 		"~"		mov	a,m		; read byte II from screen
+CE19 : E6 F0 		"  "		ani	0F0H		; bits d7,...,d4 remain from this
+CE1B : B0 		" "		ora	b		; merge them with 4 highest bits of char line...
+CE1C : 77 		"w"		mov	m,a		; ... and write byte II back to screen
+CE1D : 25 		"%"		dcr	h		; read byte III from screen
+CE1E : 7E 		"~"		mov	a,m
+CE1F : E6 3F 		" ?"		ani	03FH		; d5,...,d0 remain from this
+CE21 : B1 		" "		ora	c		; merge them with 2 lowest bits of char line...
+CE22 : 77 		"w"		mov	m,a		; ... and write byte III back to screen
+CE23 : 24 		"$"		inr	h		; back to byte II
+CE24 : 13 		" "		inx	d		; next line from char image
+CE25 : 2B 		"+"		dcx	h		; next line from screen
+CE26 : F1 		" "		pop	psw
+CE27 : 3D 		"="		dcr	a		; --counter
+CE28 : C2 07 CE 	"   "		jnz	Col_10_out	; more lines to display
+CE2B : C9 		" "		ret
+				;
+CE2C				Col_11:
+CE2C : 25 		"%"		dcr	h		; here we take byte III from screen at once
+CE2D : 25 		"%"		dcr	h
+CE2E : 0E 08 		"  "		mvi	c,008H		; char image height
+CE30 : CD 45 CE 	" E "		call	Col_11_out
+CE33 : 3A 4E 00 	":N "		lda	RAM_smth	; (I think this is) current height of char image
+CE36 : B7 		" "		ora	a		; (0=8 lines, non-0=10 lines)
+CE37 : C2 3D CE 	" = "		jnz	LCE3D
+CE3A : 11 67 CE 	" g "		lxi	d,zeroes	; 2 empty lines under character
+CE3D				LCE3D:
+CE3D : 0E 02 		"  "		mvi	c,002H
+CE3F : CD 45 CE 	" E "		call	Col_11_out
+CE42 : C3 5A CE 	" Z "		jmp	LCE5A
+				;
+CE45				Col_11_out:			; DE = char image addr, C = # of lines
+CE45 : 1A 		" "		ldax	d		; get line from char image
+CE46 : 47 		"G"		mov	b,a
+CE47 : 3A 4C 00 	":L "		lda	RAM_NormInv
+CE4A : A8 		" "		xra	b		; set Normal/Inverse
+CE4B : E6 3F 		" ?"		ani	03FH		; take only necessary bits d5,...,d0
+CE4D : 47 		"G"		mov	b,a		; B = d5,...,d0 of char line on d5,...,d0
+CE4E : 7E 		"~"		mov	a,m		; read byte III from screen
+CE4F : E6 C0 		"  "		ani	0C0H		; bits d7,d6 remain from it
+CE51 : B0 		" "		ora	b		; merge with 6 bits of char line...
+CE52 : 77 		"w"		mov	m,a		; ... and write byte III back to screen
+CE53 : 13 		" "		inx	d		; next line from char image
+CE54 : 2B 		"+"		dcx	h		; next byte (line) from screen		
+CE55 : 0D 		" "		dcr	c		; --counter
+CE56 : C2 45 CE 	" E "		jnz	Col_11_out	; more lines to display
+CE59 : C9 		" "		ret
+				;
+CE5A				LCE5A:				; I don't know, what is in byte 4F...
+CE5A : 3A 4F 00 	":O "		lda	X004F		; ...but if it isn't 0, then Out A8,0 is performed
+CE5D : B7 		" "		ora	a		; i.e. ROM removed from page zero (@ Aleksey Morozov).
+CE5E : CA 25 F9 	" % "		jz	LF925
+CE61 : AF 		" "		xra	a
+CE62 : D3 A8 		"  "		out	0A8H
+CE64 : C3 25 F9 	" % "		jmp	LF925		; LF925 is end of subroutine OutVisible, where stack is sorted out
+								; and the code of drawn character is written to text copy of screen
+				;
+CE67				zeroes:
+CE67 : 00 00 		"  "		dw	X0000		; from this, the 2 empty lines between text rows are made
+;
+;
